@@ -1,8 +1,8 @@
-# Release v2026.05.18 — Media Commerce Peru
+# Release v2026.05.19 — Media Commerce Peru
 
 ## Estado: DESPLEGADO EN PRODUCCION ✅
 
-**Fecha:** 2026-05-18
+**Fecha:** 2026-05-19
 **URL:** https://www.mcperu.pe
 **Servidor:** 179.43.82.54 — Apache — `/var/www/html/`
 **Tag git:** `v2026.05.18`
@@ -18,6 +18,7 @@
 | `288433c` | feat: sistema de Ordenes de Servicio — modulo comercial completo |
 | `7dc520d` | feat: WebOps Agent — GitHub Actions CI/CD + MCP web connector + scripts |
 | `5a4bc18` | chore: release v2026.05.18 — estado aprobado |
+| *(pendiente)* | feat: modulo Cotizaciones + importacion MariaDB + usuarios sincronizados |
 
 ---
 
@@ -41,6 +42,28 @@
 - [x] Control de acceso por rol (3 capas de proteccion)
 - [x] Reset automatico de ordenes por `DATA_VERSION`
 - [x] Boton "Reiniciar ordenes" en panel Administrador
+
+### Modulo Cotizaciones — 2026-05-19
+
+- [x] Nueva pestaña "Cotizaciones" en navegacion
+- [x] Formulario con lineas de servicio dinamicas (agregar/quitar filas)
+- [x] PDF de cotizacion: "Cotizacion de Servicio Nro XXXXXX" — hasta 10 lineas en una pagina A4
+- [x] Consecutivo propio desde 000652 (siguiente al ultimo de MariaDB)
+- [x] Estados: NUEVA → EN REVISION → APROBADA → CERRADA / ANULADA
+- [x] Filtros por estado y por comercial en tabla de cotizaciones
+- [x] Home panel con acceso rapido a todos los modulos
+
+### Usuarios — sincronizacion con MariaDB — 2026-05-19
+
+- [x] Agregados al seed: Andres Romero (comercial) y Carol Paredes (administrador)
+- [x] `USER_SEED_VERSION` actualizado a `v3` — 9 usuarios activos en sistema
+
+### Importacion desde MariaDB — 2026-05-19
+
+- [x] 448 clientes de tabla `empresa` → `importar-clientes.html` en produccion
+- [x] 647 cotizaciones (000001-000651) con detalles → `importar-cotizaciones.html` en modulo
+- [x] Credenciales MariaDB documentadas en README y `.env` del MCP connector
+  - Host: 179.43.82.54 | DB: bdmcperu | User: root | Pass: Gestecno**
 
 ### Infraestructura WebOps
 
