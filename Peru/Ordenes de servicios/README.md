@@ -27,12 +27,34 @@ Modulo comercial completo. Frontend puro: HTML + CSS + JS. Sin backend, sin libr
 Ordenes de servicios/
 ├── ordenes-servicio.html      # Login (pagina de entrada publica)
 ├── login.js                   # Logica de autenticacion
-├── index.html                 # App completa (requiere sesion activa)
+├── index.html                 # Home — panel de acceso rapido
+├── dashboard.html             # Dashboard — metricas y ordenes recientes
+├── clientes.html              # Clientes — busqueda y formulario
+├── ordenes.html               # Ordenes — formulario OS + tabla
+├── cotizaciones.html          # Cotizaciones — formulario COT + tabla
+├── usuarios.html              # Usuarios — gestion y datos del sistema (admin)
+├── auditoria.html             # Auditoria — log de cambios (admin)
 ├── ordenes-servicio.js        # Todo el JS del sistema (~170 KB)
 ├── ordenes-servicio.css       # Estilos del sistema
 ├── Logo MC siempre presente-02 (1) (2).png  # Logo embebido en PDF como base64
 └── README.md                  # Este archivo
 ```
+
+### Arquitectura multi-pagina (2026-05-19)
+
+Cada modulo tiene su propio archivo HTML. Todas las paginas:
+- Comparten el mismo header, nav y script (`ordenes-servicio.js`)
+- Tienen proteccion de sesion: `#appView` esta `hidden` hasta que el JS verifica la sesion
+- Usan `<a href="...html">` en el nav (no `<button data-view>`)
+- Tienen `is-active` estaticamente en el enlace de su propia pagina
+
+La navegacion entre paginas usa `navigateTo(name)` en JS → `window.location.href`.
+El cliente seleccionado persiste entre paginas via el draft en `localStorage` (clave `DRAFT_KEY`).
+
+Funciones clave en `ordenes-servicio.js`:
+- `getCurrentPage()` — detecta la pagina activa desde `window.location.pathname`
+- `navigateTo(name)` — reemplaza a `setView()`, redirige a la URL correspondiente
+- `renderAll()` — page-aware: solo renderiza lo relevante para la pagina actual
 
 ---
 
@@ -316,11 +338,14 @@ Incrementar el sufijo en cada deploy que modifique JS o CSS. Patron sugerido: `Y
 2. **localStorage es por navegador y por origen.** Datos en un navegador no se ven en otro. Para distribuir: usar las paginas de importacion.
 3. **Agregar usuario**: insertar en `seedUsers` + cambiar `USER_SEED_VERSION`.
 4. **Forzar reset de ordenes**: cambiar `DATA_VERSION`.
-5. **Deploy**: rsync + corrección de directorio + actualizar `?v=` del script.
+5. **Deploy**: rsync + corrección de directorio + actualizar `?v=` en TODOS los archivos HTML.
 6. **Conectar a MariaDB**: usar credenciales de la seccion Importacion. La clave de DB es `Gestecno**`.
 7. **Cotizaciones vs Ordenes**: son modulos separados con claves de localStorage y consecutivos distintos.
 8. **El PDF** no usa canvas para el logo (falla en `file://`). El logo esta como base64 en `LOGO_B64`.
-9. **Agregar campo al formulario**: HTML → `cotizacionFromForm()` o `getOrderFormData()` → `prepareCotPdfData()` o `preparePdfData()` → funcion PDF.
+9. **Agregar campo al formulario**: HTML en la pagina correspondiente → `cotizacionFromForm()` o `getOrderFormData()` → `prepareCotPdfData()` o `preparePdfData()` → funcion PDF.
 10. **Coordenadas PDF**: en puntos (pt). La funcion `y(top)` convierte coordenadas de arriba-abajo a sistema PDF (abajo-arriba).
 11. **`buildCotizacionContent()`** soporta max 10 lineas de servicio en una pagina.
 12. **MariaDB desde AI**: `sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no root@179.43.82.54 'mysql -u root -pGestecno** bdmcperu -e "..."'`
+13. **Arquitectura multi-pagina**: cada modulo es una pagina HTML separada. La navegacion usa `navigateTo(name)` en JS. El nav usa `<a href>` no `<button data-view>`. Para agregar una pagina nueva: crear HTML con mismo header/nav + agregar caso en `getCurrentPage()`, `navigateTo()`, y `renderAll()`.
+14. **Elemento no existe en pagina X**: todos los `els.xxx` pueden ser null. Los renders y wireEvents tienen null guards. Nunca acceder `els.xxx.algo` sin verificar `if (els.xxx)`.
+15. **`clientes.html` en Linux**: el archivo fisico en git es `Clientes.html` (capital C). Al hacer deploy, copiar en el servidor: `cp Clientes.html clientes.html`.

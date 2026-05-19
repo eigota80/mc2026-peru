@@ -19,6 +19,7 @@
 | `7dc520d` | feat: WebOps Agent — GitHub Actions CI/CD + MCP web connector + scripts |
 | `5a4bc18` | chore: release v2026.05.18 — estado aprobado |
 | *(pendiente)* | feat: modulo Cotizaciones + importacion MariaDB + usuarios sincronizados |
+| `c7e5e36` | feat: separar SPA en paginas independientes por modulo |
 
 ---
 
@@ -42,6 +43,16 @@
 - [x] Control de acceso por rol (3 capas de proteccion)
 - [x] Reset automatico de ordenes por `DATA_VERSION`
 - [x] Boton "Reiniciar ordenes" en panel Administrador
+
+### Arquitectura multi-pagina — 2026-05-19
+
+- [x] SPA separada en 7 HTML independientes: `index.html` (Home), `dashboard.html`, `clientes.html`, `ordenes.html`, `cotizaciones.html`, `usuarios.html`, `auditoria.html`
+- [x] Nav con `<a href>` en cada pagina, `is-active` estatico en la pagina activa
+- [x] `setView()` reemplazado por `navigateTo()` con `window.location.href`
+- [x] `renderAll()` page-aware via `getCurrentPage()`
+- [x] Null guards en todos los `wireEvents()`, `applyPermissions()`, `renderMetrics()`, `renderOrders()`, `renderUsers()`, `renderAudit()`
+- [x] Cache CSS/JS version: `v=20260519-multipagina-v1`
+- [x] Desplegado en produccion: todas las paginas responden HTTP 200
 
 ### Modulo Cotizaciones — 2026-05-19
 
