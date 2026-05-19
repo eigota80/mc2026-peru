@@ -884,6 +884,9 @@
 		orders[index].updated_by = currentUser.id;
 		orders[index].updated_at = new Date().toISOString();
 		saveOrders(orders);
+		if (orders[index].db_id) {
+			apiPost('/ordenes.php', { action: 'update_status', db_id: orders[index].db_id, estado: status });
+		}
 		audit('actualizo estado', `OS ${orders[index].numero_os} -> ${status}`);
 		renderAll();
 	}
