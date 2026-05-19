@@ -371,6 +371,20 @@
 					</table>
 				</div>
 			</section>
+			<section class="os-panel">
+				<div class="os-section-head">
+					<h2>Datos del sistema</h2>
+				</div>
+				<div class="os-form-actions">
+					<button type="button" class="os-button os-button-ghost" id="resetOrdersBtn" data-permission="manage_users">
+						<i class="fas fa-trash-alt" aria-hidden="true"></i>
+						<span>Reiniciar ordenes</span>
+					</button>
+					<p class="os-alert" role="note" style="display:block;margin-top:.5rem;font-size:.8rem;opacity:.7;">
+						Elimina todas las ordenes registradas y reinicia el consecutivo a 000700. Solo Administrador.
+					</p>
+				</div>
+			</section>
 		</section>
 
 		<section class="os-view" id="auditoriaView" data-title="Auditoria" hidden>
@@ -395,6 +409,6 @@
 		</section>
 	</section>
 </main>
-<script src="ordenes-servicio.js?v=20260518-logo-v1"></script>
+<script src="ordenes-servicio.js?v=20260518-reset-v1"></script>
 </body>
 </html>
