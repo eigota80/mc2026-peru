@@ -1,0 +1,60 @@
+{
+  "name": "Media Commerce",
+  "short_name": "MC",
+  "description": "Somos un operador de telecomunicaciones enfocado en conectar empresas en Perú.",
+  "lang": "es",
+  "display": "standalone",
+  "background_color": "#08080D",
+  "theme_color": "#08080D",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/index.html",
+  "serviceworker": {
+    "src": "service-worker.js",
+    "scope": "/"
+  },
+  "icons": [
+    {
+      "src": "images/system/app-icon/android/launcher-icon-0-75x.png",
+      "sizes": "36x36",
+      "type": "image/png",
+      "density": 0.75
+    },
+    {
+      "src": "images/system/app-icon/android/launcher-icon-1x.png",
+      "sizes": "48x48",
+      "type": "image/png",
+      "density": 1.0
+    },
+    {
+      "src": "images/system/app-icon/android/launcher-icon-1-5x.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "density": 1.5
+    },
+    {
+      "src": "images/system/app-icon/android/launcher-icon-2x.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "density": 2.0
+    },
+    {
+      "src": "images/system/app-icon/android/launcher-icon-3x.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "density": 3.0
+    },
+    {
+      "src": "images/system/app-icon/android/launcher-icon-4x.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "density": 4.0
+    },
+    {
+      "src": "images/system/app-icon/android/launcher-icon-6x.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "density": 5.0
+    }
+  ]
+}

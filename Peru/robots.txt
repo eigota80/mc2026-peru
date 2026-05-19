@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Rutas de sistema y privadas — no indexar
+Disallow: /logs/
+Disallow: /php/
+Disallow: /_deploy/
+Disallow: /Ordenes de servicios/index.html
+
+# La pagina de login de Ordenes se puede indexar para acceso interno
+Allow: /Ordenes de servicios/ordenes-servicio.html
+
+Sitemap: https://www.mcperu.pe/sitemap.xml
