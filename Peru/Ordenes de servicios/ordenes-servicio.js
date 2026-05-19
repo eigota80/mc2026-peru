@@ -464,12 +464,13 @@
 		if (path.includes('cotizaciones.html')) { return 'cotizaciones'; }
 		if (path.includes('usuarios.html')) { return 'usuarios'; }
 		if (path.includes('auditoria.html')) { return 'auditoria'; }
+		if (path.includes('informes.html')) { return 'informes'; }
 		return 'home';
 	}
 
 	function navigateTo(name) {
 		if (['usuarios', 'auditoria'].includes(name) && !hasPermission('manage_users')) { return; }
-		const pages = { home: 'index.html', dashboard: 'dashboard.html', clientes: 'clientes.html', ordenes: 'ordenes.html', cotizaciones: 'cotizaciones.html', usuarios: 'usuarios.html', auditoria: 'auditoria.html' };
+		const pages = { home: 'index.html', dashboard: 'dashboard.html', clientes: 'clientes.html', ordenes: 'ordenes.html', cotizaciones: 'cotizaciones.html', usuarios: 'usuarios.html', auditoria: 'auditoria.html', informes: 'informes.html' };
 		window.location.href = pages[name] || 'index.html';
 	}
 
@@ -898,6 +899,7 @@
 		if (page === 'cotizaciones') { renderCotizaciones(); renderCotSelectedClient(); updateCotCounterView(); }
 		if (page === 'usuarios' && hasPermission('manage_users')) { renderUsers(); }
 		if (page === 'auditoria' && hasPermission('manage_users')) { renderAudit(); }
+		if (page === 'informes') { if (typeof window.renderInformesPage === 'function') { window.renderInformesPage(); } }
 	}
 
 	function handleResetOrders() {

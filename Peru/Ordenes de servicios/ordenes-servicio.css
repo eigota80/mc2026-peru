@@ -787,3 +787,139 @@
 a.os-nav-button {
 	text-decoration: none;
 }
+
+/* ── Informes module ─────────────────────────────────────────── */
+
+.os-period-bar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 4px;
+}
+
+.os-period-buttons {
+	display: flex;
+	gap: 6px;
+	flex-wrap: wrap;
+}
+
+.os-period-btn {
+	padding: 6px 16px;
+	border: 1px solid var(--os-line);
+	border-radius: 20px;
+	background: #fff;
+	color: var(--os-muted);
+	font: 600 .82rem/1 Arial, sans-serif;
+	cursor: pointer;
+	transition: background .15s, color .15s, border-color .15s;
+}
+
+.os-period-btn:hover {
+	border-color: var(--os-blue-2);
+	color: var(--os-blue-2);
+}
+
+.os-period-btn.is-active {
+	background: var(--os-blue);
+	border-color: var(--os-blue);
+	color: #fff;
+}
+
+.os-period-custom {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	flex-wrap: wrap;
+}
+
+.os-period-custom label {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	font: 400 .82rem/1 Arial, sans-serif;
+	color: var(--os-muted);
+}
+
+.os-period-custom input[type="date"] {
+	padding: 5px 8px;
+	border: 1px solid var(--os-line);
+	border-radius: 6px;
+	background: #fbfdff;
+	color: var(--os-ink);
+	font: 400 .82rem/1 Arial, sans-serif;
+	outline: none;
+}
+
+.os-period-custom input[type="date"]:focus {
+	border-color: var(--os-cyan);
+	box-shadow: 0 0 0 3px rgba(66, 200, 244, .14);
+}
+
+.os-informes-cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 16px;
+	margin-bottom: 8px;
+}
+
+.os-informes-card {
+	background: #fff;
+	border: 1px solid var(--os-line);
+	border-radius: 10px;
+	padding: 20px 20px 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.os-informes-card-label {
+	font: 400 .78rem/1 Arial, sans-serif;
+	color: var(--os-muted);
+	text-transform: uppercase;
+	letter-spacing: .04em;
+}
+
+.os-informes-card-value {
+	font: 700 1.8rem/1 Arial, sans-serif;
+	color: var(--os-blue);
+}
+
+.os-informes-card-sub {
+	font: 400 .8rem/1 Arial, sans-serif;
+	color: var(--os-muted);
+}
+
+.os-charts-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+	gap: 20px;
+}
+
+.os-chart-wrap {
+	background: #fff;
+	border: 1px solid var(--os-line);
+	border-radius: 10px;
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.os-chart-wrap h3 {
+	font: 600 .9rem/1 Arial, sans-serif;
+	color: var(--os-ink);
+	margin: 0;
+}
+
+.os-chart-wrap canvas {
+	max-height: 260px;
+}
+
+.os-chart-wide {
+	grid-column: 1 / -1;
+}
+
+.os-chart-wide canvas {
+	max-height: 220px;
+}
