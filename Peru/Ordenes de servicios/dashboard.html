@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5">
-<title>Home | Media Commerce</title>
+<title>Dashboard | Media Commerce</title>
 <link rel="stylesheet" href="../css/core.min.css?v=2.3.19.05.13.0" type="text/css">
 <link rel="stylesheet" href="../style.css?v=20260428-global-nav" type="text/css">
 <link rel="stylesheet" href="ordenes-servicio.css?v=20260519-multipagina-v1" type="text/css">
@@ -18,7 +18,7 @@
 			</a>
 			<div class="os-header-copy">
 				<p class="os-eyebrow">Sistema de Ordenes de Servicio</p>
-				<h1 id="viewTitle">Home</h1>
+				<h1 id="viewTitle">Dashboard</h1>
 			</div>
 			<div class="os-session">
 				<strong id="sessionName"></strong>
@@ -30,11 +30,11 @@
 		</header>
 
 		<nav class="os-nav" aria-label="Modulos">
-			<a href="index.html" class="os-nav-button is-active">
+			<a href="index.html" class="os-nav-button">
 				<i class="fas fa-home" aria-hidden="true"></i>
 				<span>Home</span>
 			</a>
-			<a href="dashboard.html" class="os-nav-button">
+			<a href="dashboard.html" class="os-nav-button is-active">
 				<i class="fas fa-chart-line" aria-hidden="true"></i>
 				<span>Dashboard</span>
 			</a>
@@ -60,37 +60,49 @@
 			</a>
 		</nav>
 
-		<section class="os-home-panel" aria-label="Menu principal">
-			<button type="button" class="os-home-button" data-home-target="dashboard">
-				<i class="fas fa-chart-line" aria-hidden="true"></i>
-				<span>DASHBOARD</span>
-				<strong id="homeDashboardCount">0 ordenes</strong>
-			</button>
-			<button type="button" class="os-home-button" data-home-target="clientes">
-				<i class="fas fa-building" aria-hidden="true"></i>
-				<span>CLIENTES</span>
-				<strong id="homeClientesCount">0 clientes</strong>
-			</button>
-			<button type="button" class="os-home-button" data-home-target="ordenes">
-				<i class="far fa-file-alt" aria-hidden="true"></i>
-				<span>ORDENES</span>
-				<strong id="homeOrdenesCount">0 ordenes</strong>
-			</button>
-			<button type="button" class="os-home-button" data-home-target="cotizaciones">
-				<i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>
-				<span>COTIZACIONES</span>
-				<strong id="homeCotizacionesCount">0 cotizaciones</strong>
-			</button>
-			<button type="button" class="os-home-button" data-home-target="usuarios" data-permission="manage_users">
-				<i class="fas fa-user-shield" aria-hidden="true"></i>
-				<span>USUARIOS</span>
-				<strong id="homeUsuariosCount">0 usuarios</strong>
-			</button>
-			<button type="button" class="os-home-button" data-home-target="auditoria" data-permission="manage_users">
-				<i class="fas fa-history" aria-hidden="true"></i>
-				<span>AUDITORIAS</span>
-				<strong id="homeAuditoriasCount">0 eventos</strong>
-			</button>
+		<div class="os-metrics" aria-label="Indicadores">
+			<article>
+				<span>Clientes</span>
+				<strong id="metricClientes">0</strong>
+			</article>
+			<article>
+				<span>Ordenes</span>
+				<strong id="metricOrdenes">0</strong>
+			</article>
+			<article>
+				<span>MRC total</span>
+				<strong id="metricMrc">0.00</strong>
+			</article>
+			<article>
+				<span>NRC total</span>
+				<strong id="metricNrc">0.00</strong>
+			</article>
+			<article>
+				<span>Cotizaciones</span>
+				<strong id="metricCotizaciones">0</strong>
+			</article>
+		</div>
+
+		<section class="os-panel">
+			<div class="os-section-head">
+				<h2>Ordenes recientes</h2>
+				<button type="button" class="os-button os-button-secondary" data-shortcut="ordenes">Nueva orden</button>
+			</div>
+			<div class="os-table-wrap">
+				<table class="os-table">
+					<thead>
+						<tr>
+							<th>OS</th>
+							<th>Cliente</th>
+							<th>Fecha</th>
+							<th>Estado</th>
+							<th>MRC</th>
+							<th>NRC</th>
+						</tr>
+					</thead>
+					<tbody id="recentOrdersBody"></tbody>
+				</table>
+			</div>
 		</section>
 	</section>
 </main>

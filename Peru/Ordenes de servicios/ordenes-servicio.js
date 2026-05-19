@@ -418,8 +418,9 @@
 		if (!window.confirm('Limpiar los datos de la orden?')) {
 			return;
 		}
-		els.orderForm.reset();
-		byId('fecha').value = todayISO();
+		if (els.orderForm) { els.orderForm.reset(); }
+		const fechaEl = byId('fecha');
+		if (fechaEl) { fechaEl.value = todayISO(); }
 		selectedClientId = null;
 		localStorage.removeItem(DRAFT_KEY);
 		updateInstallationCostState(false);
@@ -455,28 +456,21 @@
 		window.location.href = 'ordenes-servicio.html';
 	}
 
-	function setView(name) {
-		if (['usuarios', 'auditoria'].includes(name) && !hasPermission('manage_users')) {
-			return;
-		}
-		let activeView = null;
-		document.querySelectorAll('.os-view').forEach((view) => {
-			const active = view.id === `${name}View`;
-			view.classList.toggle('is-active', active);
-			view.hidden = !active;
-			if (active) {
-				els.viewTitle.textContent = view.dataset.title || 'Dashboard';
-				activeView = view;
-			}
-		});
-		document.querySelectorAll('.os-nav-button').forEach((button) => {
-			button.classList.toggle('is-active', button.dataset.view === name);
-		});
-		if (activeView) {
-			window.scrollTo({ top: 0, behavior: 'smooth' });
-		} else if (name !== 'home') {
-			setView('home');
-		}
+	function getCurrentPage() {
+		const path = window.location.pathname;
+		if (path.includes('dashboard.html')) { return 'dashboard'; }
+		if (path.includes('clientes.html')) { return 'clientes'; }
+		if (path.includes('ordenes.html')) { return 'ordenes'; }
+		if (path.includes('cotizaciones.html')) { return 'cotizaciones'; }
+		if (path.includes('usuarios.html')) { return 'usuarios'; }
+		if (path.includes('auditoria.html')) { return 'auditoria'; }
+		return 'home';
+	}
+
+	function navigateTo(name) {
+		if (['usuarios', 'auditoria'].includes(name) && !hasPermission('manage_users')) { return; }
+		const pages = { home: 'index.html', dashboard: 'dashboard.html', clientes: 'clientes.html', ordenes: 'ordenes.html', cotizaciones: 'cotizaciones.html', usuarios: 'usuarios.html', auditoria: 'auditoria.html' };
+		window.location.href = pages[name] || 'index.html';
 	}
 
 	function applyPermissions() {
@@ -487,14 +481,16 @@
 				element.disabled = !allowed;
 			}
 		});
-		if (!hasPermission('create_orders')) {
-			els.orderForm.querySelectorAll('input, select, textarea').forEach((field) => {
-				field.disabled = true;
-			});
-		} else {
-			els.orderForm.querySelectorAll('input, select, textarea').forEach((field) => {
-				field.disabled = false;
-			});
+		if (els.orderForm) {
+			if (!hasPermission('create_orders')) {
+				els.orderForm.querySelectorAll('input, select, textarea').forEach((field) => {
+					field.disabled = true;
+				});
+			} else {
+				els.orderForm.querySelectorAll('input, select, textarea').forEach((field) => {
+					field.disabled = false;
+				});
+			}
 		}
 	}
 
@@ -507,7 +503,6 @@
 		}
 		currentUser = user;
 		showApp();
-		setView('home');
 	}
 
 	function logout() {
@@ -728,7 +723,7 @@
 		}
 		if (!selectedClientId || !findClient(selectedClientId)) {
 			window.alert('Selecciona o crea un cliente antes de crear la orden.');
-			setView('clientes');
+			navigateTo('clientes');
 			return;
 		}
 		if (!els.orderForm.reportValidity()) {
@@ -806,10 +801,10 @@
 		const clients = getClients();
 		const orders = getVisibleOrders();
 		const cotizaciones = getVisibleCotizaciones();
-		els.metricClientes.textContent = String(clients.length);
-		els.metricOrdenes.textContent = String(orders.length);
-		els.metricMrc.textContent = formatMoney(orders.reduce((sum, order) => sum + parseMoney(order.mrc), 0));
-		els.metricNrc.textContent = formatMoney(orders.reduce((sum, order) => sum + (hasInstallationCost(order.costo_instalacion) ? parseMoney(order.nrc) : 0), 0));
+		if (els.metricClientes) { els.metricClientes.textContent = String(clients.length); }
+		if (els.metricOrdenes) { els.metricOrdenes.textContent = String(orders.length); }
+		if (els.metricMrc) { els.metricMrc.textContent = formatMoney(orders.reduce((sum, order) => sum + parseMoney(order.mrc), 0)); }
+		if (els.metricNrc) { els.metricNrc.textContent = formatMoney(orders.reduce((sum, order) => sum + (hasInstallationCost(order.costo_instalacion) ? parseMoney(order.nrc) : 0), 0)); }
 		setText('metricCotizaciones', String(cotizaciones.length));
 	}
 
@@ -846,15 +841,20 @@
 	}
 
 	function renderOrders() {
-		const status = els.statusFilter.value;
+		const status = els.statusFilter ? els.statusFilter.value : '';
 		const visible = getVisibleOrders();
 		const orders = visible.filter((order) => !status || order.estado === status);
-		els.ordersBody.innerHTML = orders.length ? orders.map((order) => orderRow(order, false)).join('') : '<tr><td colspan="6" class="os-empty">Sin ordenes registradas.</td></tr>';
+		if (els.ordersBody) {
+			els.ordersBody.innerHTML = orders.length ? orders.map((order) => orderRow(order, false)).join('') : '<tr><td colspan="6" class="os-empty">Sin ordenes registradas.</td></tr>';
+		}
 		const recent = visible.slice(0, 5);
-		els.recentOrdersBody.innerHTML = recent.length ? recent.map((order) => orderRow(order, true)).join('') : '<tr><td colspan="6" class="os-empty">Sin ordenes registradas.</td></tr>';
+		if (els.recentOrdersBody) {
+			els.recentOrdersBody.innerHTML = recent.length ? recent.map((order) => orderRow(order, true)).join('') : '<tr><td colspan="6" class="os-empty">Sin ordenes registradas.</td></tr>';
+		}
 	}
 
 	function renderUsers() {
+		if (!els.usersBody) { return; }
 		const users = getUsers();
 		els.usersBody.innerHTML = users.map((user) => `
 			<tr>
@@ -872,6 +872,7 @@
 	}
 
 	function renderAudit() {
+		if (!els.auditBody) { return; }
 		const items = readStore(AUDIT_KEY, []);
 		els.auditBody.innerHTML = items.length ? items.map((item) => `
 			<tr>
@@ -884,18 +885,14 @@
 	}
 
 	function renderAll() {
-		renderHome();
-		renderMetrics();
-		renderOrders();
-		renderCotizaciones();
-		if (hasPermission('manage_users')) {
-			renderUsers();
-			renderAudit();
-		}
-		renderSelectedClient();
-		renderCotSelectedClient();
-		updateCounterView();
-		updateCotCounterView();
+		const page = getCurrentPage();
+		if (page === 'home') { renderHome(); }
+		if (page === 'dashboard') { renderMetrics(); renderOrders(); }
+		if (page === 'ordenes') { renderOrders(); renderSelectedClient(); updateCounterView(); }
+		if (page === 'clientes') { /* client search rendered on demand */ }
+		if (page === 'cotizaciones') { renderCotizaciones(); renderCotSelectedClient(); updateCotCounterView(); }
+		if (page === 'usuarios' && hasPermission('manage_users')) { renderUsers(); }
+		if (page === 'auditoria' && hasPermission('manage_users')) { renderAudit(); }
 	}
 
 	function handleResetOrders() {
@@ -1289,59 +1286,61 @@
 	// ─── FIN MODULO COTIZACIONES ────────────────────────────────────────────
 
 	function wireEvents() {
-		els.logoutBtn.addEventListener('click', logout);
-		document.querySelectorAll('.os-nav-button').forEach((button) => {
-			button.addEventListener('click', () => setView(button.dataset.view));
-		});
+		if (els.logoutBtn) { els.logoutBtn.addEventListener('click', logout); }
 		document.querySelectorAll('[data-home-target]').forEach((button) => {
-			button.addEventListener('click', () => setView(button.dataset.homeTarget));
+			button.addEventListener('click', () => navigateTo(button.dataset.homeTarget));
 		});
 		document.querySelectorAll('[data-shortcut]').forEach((button) => {
-			button.addEventListener('click', () => setView(button.dataset.shortcut));
+			button.addEventListener('click', () => navigateTo(button.dataset.shortcut));
 		});
-		els.clientSearchForm.addEventListener('submit', handleClientSearch);
-		els.clientResults.addEventListener('click', (event) => {
-			const button = event.target.closest('[data-select-client]');
-			if (button) {
-				selectClient(button.dataset.selectClient);
-			}
-		});
-		els.newClientBtn.addEventListener('click', newClient);
-		els.clientForm.addEventListener('submit', saveClient);
-		els.orderForm.addEventListener('submit', createOrder);
-		els.orderForm.addEventListener('input', saveDraft);
-		els.orderForm.addEventListener('change', saveDraft);
-		byId('costoInstalacion').addEventListener('change', () => updateInstallationCostState(true));
-		els.saveCounterBtn.addEventListener('click', () => setNextNumber(els.nextInput.value));
-		els.nextInput.addEventListener('input', () => {
-			els.nextInput.value = els.nextInput.value.replace(/\D/g, '').slice(0, 6);
-		});
-		els.nextInput.addEventListener('blur', () => {
-			els.nextInput.value = padOrderNumber(els.nextInput.value);
-		});
-		els.previewPdfBtn.addEventListener('click', openPreview);
-		els.clearFormBtn.addEventListener('click', clearOrderForm);
-		els.statusFilter.addEventListener('change', renderOrders);
-		els.ordersBody.addEventListener('click', (event) => {
-			const pdfButton = event.target.closest('[data-pdf-order]');
-			const statusButton = event.target.closest('[data-status-order]');
-			if (pdfButton) {
-				const order = getOrders().find((item) => item.id === pdfButton.dataset.pdfOrder);
-				if (order) {
-					downloadOrderPdf(order);
+		if (els.clientSearchForm) { els.clientSearchForm.addEventListener('submit', handleClientSearch); }
+		if (els.clientResults) {
+			els.clientResults.addEventListener('click', (event) => {
+				const button = event.target.closest('[data-select-client]');
+				if (button) { selectClient(button.dataset.selectClient); }
+			});
+		}
+		if (els.newClientBtn) { els.newClientBtn.addEventListener('click', newClient); }
+		if (els.clientForm) { els.clientForm.addEventListener('submit', saveClient); }
+		if (els.orderForm) {
+			els.orderForm.addEventListener('submit', createOrder);
+			els.orderForm.addEventListener('input', saveDraft);
+			els.orderForm.addEventListener('change', saveDraft);
+		}
+		const costoInstalacionEl = byId('costoInstalacion');
+		if (costoInstalacionEl) { costoInstalacionEl.addEventListener('change', () => updateInstallationCostState(true)); }
+		if (els.saveCounterBtn && els.nextInput) { els.saveCounterBtn.addEventListener('click', () => setNextNumber(els.nextInput.value)); }
+		if (els.nextInput) {
+			els.nextInput.addEventListener('input', () => {
+				els.nextInput.value = els.nextInput.value.replace(/\D/g, '').slice(0, 6);
+			});
+			els.nextInput.addEventListener('blur', () => {
+				els.nextInput.value = padOrderNumber(els.nextInput.value);
+			});
+		}
+		if (els.previewPdfBtn) { els.previewPdfBtn.addEventListener('click', openPreview); }
+		if (els.clearFormBtn) { els.clearFormBtn.addEventListener('click', clearOrderForm); }
+		if (els.statusFilter) { els.statusFilter.addEventListener('change', renderOrders); }
+		if (els.ordersBody) {
+			els.ordersBody.addEventListener('click', (event) => {
+				const pdfButton = event.target.closest('[data-pdf-order]');
+				const statusButton = event.target.closest('[data-status-order]');
+				if (pdfButton) {
+					const order = getOrders().find((item) => item.id === pdfButton.dataset.pdfOrder);
+					if (order) { downloadOrderPdf(order); }
 				}
-			}
-			if (statusButton) {
-				updateOrderStatus(statusButton.dataset.statusOrder, statusButton.dataset.statusValue);
-			}
-		});
-		els.userForm.addEventListener('submit', createUser);
-		els.usersBody.addEventListener('click', (event) => {
-			const button = event.target.closest('[data-toggle-user]');
-			if (button) {
-				toggleUser(button.dataset.toggleUser);
-			}
-		});
+				if (statusButton) {
+					updateOrderStatus(statusButton.dataset.statusOrder, statusButton.dataset.statusValue);
+				}
+			});
+		}
+		if (els.userForm) { els.userForm.addEventListener('submit', createUser); }
+		if (els.usersBody) {
+			els.usersBody.addEventListener('click', (event) => {
+				const button = event.target.closest('[data-toggle-user]');
+				if (button) { toggleUser(button.dataset.toggleUser); }
+			});
+		}
 		const resetBtn = byId('resetOrdersBtn');
 		if (resetBtn) {
 			resetBtn.addEventListener('click', handleResetOrders);

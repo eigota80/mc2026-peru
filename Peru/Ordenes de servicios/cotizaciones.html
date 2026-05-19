@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5">
+<title>Cotizaciones | Media Commerce</title>
+<link rel="stylesheet" href="../css/core.min.css?v=2.3.19.05.13.0" type="text/css">
+<link rel="stylesheet" href="../style.css?v=20260428-global-nav" type="text/css">
+<link rel="stylesheet" href="ordenes-servicio.css?v=20260519-multipagina-v1" type="text/css">
+<link rel="icon" type="image/png" sizes="32x32" href="../images/system/favicon/favicon-32x32.png?v=2.3.19.05.13.0">
+</head>
+<body class="os-page">
+<main class="os-shell">
+	<section class="os-app" id="appView" hidden>
+		<header class="os-header">
+			<a href="../index.html" class="os-brand" aria-label="Media Commerce">
+				<img src="Logo MC siempre presente-02 (1) (2).png" alt="Media Commerce">
+			</a>
+			<div class="os-header-copy">
+				<p class="os-eyebrow">Sistema de Ordenes de Servicio</p>
+				<h1 id="viewTitle">Cotizaciones</h1>
+			</div>
+			<div class="os-session">
+				<strong id="sessionName"></strong>
+				<span id="sessionRole"></span>
+				<button type="button" class="os-icon-button" id="logoutBtn" aria-label="Cerrar sesion" title="Cerrar sesion">
+					<i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+				</button>
+			</div>
+		</header>
+
+		<nav class="os-nav" aria-label="Modulos">
+			<a href="index.html" class="os-nav-button">
+				<i class="fas fa-home" aria-hidden="true"></i>
+				<span>Home</span>
+			</a>
+			<a href="dashboard.html" class="os-nav-button">
+				<i class="fas fa-chart-line" aria-hidden="true"></i>
+				<span>Dashboard</span>
+			</a>
+			<a href="clientes.html" class="os-nav-button">
+				<i class="fas fa-building" aria-hidden="true"></i>
+				<span>Clientes</span>
+			</a>
+			<a href="ordenes.html" class="os-nav-button">
+				<i class="far fa-file-alt" aria-hidden="true"></i>
+				<span>Ordenes</span>
+			</a>
+			<a href="cotizaciones.html" class="os-nav-button is-active">
+				<i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>
+				<span>Cotizaciones</span>
+			</a>
+			<a href="usuarios.html" class="os-nav-button" data-permission="manage_users">
+				<i class="fas fa-user-shield" aria-hidden="true"></i>
+				<span>Usuarios</span>
+			</a>
+			<a href="auditoria.html" class="os-nav-button" data-permission="manage_users">
+				<i class="fas fa-history" aria-hidden="true"></i>
+				<span>Auditoria</span>
+			</a>
+		</nav>
+
+		<section class="os-toolbar" aria-label="Acciones de cotizacion">
+			<div class="os-counter-edit">
+				<label for="nextCotNumber">Siguiente cotizacion</label>
+				<input id="nextCotNumber" type="text" inputmode="numeric" maxlength="6" value="000652">
+				<button type="button" class="os-button os-button-secondary" id="cotSaveCounterBtn" data-permission="create_orders">
+					<i class="fas fa-save" aria-hidden="true"></i>
+					<span>Guardar</span>
+				</button>
+			</div>
+			<div class="os-counter" aria-live="polite">
+				<span>Consecutivo</span>
+				<strong id="cotNumberPreview">000652</strong>
+			</div>
+			<div class="os-actions">
+				<button type="submit" class="os-button os-button-primary" form="cotizacionForm" data-permission="create_orders">
+					<i class="far fa-file-pdf" aria-hidden="true"></i>
+					<span>Crear COT y PDF</span>
+				</button>
+				<button type="button" class="os-button os-button-ghost" id="cotClearFormBtn">
+					<i class="fas fa-eraser" aria-hidden="true"></i>
+					<span>Limpiar</span>
+				</button>
+			</div>
+		</section>
+
+		<form id="cotizacionForm" class="os-form" autocomplete="on">
+			<section class="os-panel">
+				<div class="os-section-head">
+					<h2>Cliente</h2>
+				</div>
+				<div class="os-selected-client" id="cotSelectedClientBox">
+					<strong>Sin cliente seleccionado</strong>
+					<span>Busca y vincula un cliente o deja en blanco para completar despues.</span>
+				</div>
+				<div id="cotClientSearchForm" class="os-inline-form">
+					<label>
+						<span>RUC/DNI o razon social</span>
+						<input type="search" id="cotClientSearch">
+					</label>
+					<button type="button" class="os-button os-button-secondary" data-cot-client-search>
+						<i class="fas fa-search" aria-hidden="true"></i>
+						<span>Buscar</span>
+					</button>
+				</div>
+				<div class="os-results" id="cotClientResults"></div>
+			</section>
+
+			<section class="os-panel">
+				<h2>Datos de la cotizacion</h2>
+				<div class="os-grid os-grid-three">
+					<label>
+						<span>Fecha</span>
+						<input type="date" id="cotFecha" name="cotFecha" required>
+					</label>
+					<label>
+						<span>Moneda</span>
+						<select id="cotMoneda" name="cotMoneda">
+							<option value="SOLES">SOLES</option>
+							<option value="USD">USD</option>
+						</select>
+					</label>
+					<label>
+						<span>Duracion</span>
+						<input type="text" id="cotDuracion" name="cotDuracion" placeholder="24 meses">
+					</label>
+					<label>
+						<span>Tipo de servicio</span>
+						<select id="cotTipo" name="cotTipo">
+							<option value="ALTA">Alta</option>
+							<option value="BAJA">Baja</option>
+							<option value="RENOVACION">Renovacion</option>
+							<option value="RENOVACION UPGRADE">Renovacion Upgrade</option>
+							<option value="RENOVACION DOWNGRADE">Renovacion Downgrade</option>
+							<option value="UPGRADE">Upgrade</option>
+							<option value="DOWNGRADE">Downgrade</option>
+							<option value="VENTA UNICA">Venta unica</option>
+							<option value="TRASLADO">Traslado</option>
+							<option value="MANTENIMIENTO">Mantenimiento</option>
+							<option value="SOLICITUD">Solicitud</option>
+						</select>
+					</label>
+					<label>
+						<span>Comercial responsable</span>
+						<input type="text" id="cotComercial" name="cotComercial" placeholder="Nombre del comercial">
+					</label>
+					<label>
+						<span>Valor instalacion (NRC)</span>
+						<input type="number" id="cotValorInstalacion" name="cotValorInstalacion" min="0" step="0.01" value="0">
+					</label>
+				</div>
+			</section>
+
+			<section class="os-panel">
+				<div class="os-section-head">
+					<h2>Servicios</h2>
+					<button type="button" class="os-button os-button-secondary" id="addDetalleBtn">
+						<i class="fas fa-plus" aria-hidden="true"></i>
+						<span>Agregar linea</span>
+					</button>
+				</div>
+				<datalist id="serviciosList">
+					<option value="INTERNET">
+					<option value="TRANSPORTE DE DATOS">
+					<option value="SOLUCION INTEGRAL">
+					<option value="FIBRA OPTICA">
+					<option value="MPLS">
+					<option value="SEGURIDAD">
+				</datalist>
+				<div class="os-table-wrap">
+					<table class="os-table os-table-compact">
+						<thead>
+							<tr>
+								<th>Ciudad</th>
+								<th>Servicio</th>
+								<th>MRC</th>
+								<th>Dias entrega</th>
+								<th>Dir. Origen</th>
+								<th>Dir. Destino</th>
+								<th>Detalle</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody id="cotDetallesBody"></tbody>
+					</table>
+				</div>
+			</section>
+
+			<section class="os-panel">
+				<h2>Observacion</h2>
+				<div class="os-grid">
+					<label class="os-span-two">
+						<span>Observacion</span>
+						<textarea id="cotObservacion" name="cotObservacion" rows="4"></textarea>
+					</label>
+				</div>
+			</section>
+		</form>
+
+		<section class="os-panel">
+			<div class="os-section-head">
+				<h2>Cotizaciones registradas</h2>
+				<div class="os-filter-group">
+					<select id="cotEstadoFilter" aria-label="Filtrar estado">
+						<option value="">Todos los estados</option>
+						<option value="NUEVA">Nueva</option>
+						<option value="EN REVISION">En revision</option>
+						<option value="APROBADA">Aprobada</option>
+						<option value="CERRADA">Cerrada</option>
+						<option value="ANULADA">Anulada</option>
+						<option value="CERRADO">Cerrado (legacy)</option>
+						<option value="ANULADO">Anulado (legacy)</option>
+						<option value="PENDIENTE ANULACION">Pendiente anulacion</option>
+					</select>
+					<input type="search" id="cotComercialFilter" placeholder="Buscar comercial..." aria-label="Filtrar por comercial">
+				</div>
+			</div>
+			<div class="os-table-wrap">
+				<table class="os-table">
+					<thead>
+						<tr>
+							<th>COT</th>
+							<th>Cliente</th>
+							<th>Fecha</th>
+							<th>Tipo</th>
+							<th>Estado</th>
+							<th>MRC total</th>
+							<th>Comercial</th>
+							<th>Acciones</th>
+						</tr>
+					</thead>
+					<tbody id="cotBody"></tbody>
+				</table>
+			</div>
+		</section>
+	</section>
+</main>
+<script src="ordenes-servicio.js?v=20260519-multipagina-v1"></script>
+</body>
+</html>

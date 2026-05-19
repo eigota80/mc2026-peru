@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5">
+<title>Ordenes de Servicio | Media Commerce</title>
+<link rel="stylesheet" href="../css/core.min.css?v=2.3.19.05.13.0" type="text/css">
+<link rel="stylesheet" href="../style.css?v=20260428-global-nav" type="text/css">
+<link rel="stylesheet" href="ordenes-servicio.css?v=20260519-multipagina-v1" type="text/css">
+<link rel="icon" type="image/png" sizes="32x32" href="../images/system/favicon/favicon-32x32.png?v=2.3.19.05.13.0">
+</head>
+<body class="os-page">
+<main class="os-shell">
+	<section class="os-app" id="appView" hidden>
+		<header class="os-header">
+			<a href="../index.html" class="os-brand" aria-label="Media Commerce">
+				<img src="Logo MC siempre presente-02 (1) (2).png" alt="Media Commerce">
+			</a>
+			<div class="os-header-copy">
+				<p class="os-eyebrow">Sistema de Ordenes de Servicio</p>
+				<h1 id="viewTitle">Ordenes de Servicio</h1>
+			</div>
+			<div class="os-session">
+				<strong id="sessionName"></strong>
+				<span id="sessionRole"></span>
+				<button type="button" class="os-icon-button" id="logoutBtn" aria-label="Cerrar sesion" title="Cerrar sesion">
+					<i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+				</button>
+			</div>
+		</header>
+
+		<nav class="os-nav" aria-label="Modulos">
+			<a href="index.html" class="os-nav-button">
+				<i class="fas fa-home" aria-hidden="true"></i>
+				<span>Home</span>
+			</a>
+			<a href="dashboard.html" class="os-nav-button">
+				<i class="fas fa-chart-line" aria-hidden="true"></i>
+				<span>Dashboard</span>
+			</a>
+			<a href="clientes.html" class="os-nav-button">
+				<i class="fas fa-building" aria-hidden="true"></i>
+				<span>Clientes</span>
+			</a>
+			<a href="ordenes.html" class="os-nav-button is-active">
+				<i class="far fa-file-alt" aria-hidden="true"></i>
+				<span>Ordenes</span>
+			</a>
+			<a href="cotizaciones.html" class="os-nav-button">
+				<i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>
+				<span>Cotizaciones</span>
+			</a>
+			<a href="usuarios.html" class="os-nav-button" data-permission="manage_users">
+				<i class="fas fa-user-shield" aria-hidden="true"></i>
+				<span>Usuarios</span>
+			</a>
+			<a href="auditoria.html" class="os-nav-button" data-permission="manage_users">
+				<i class="fas fa-history" aria-hidden="true"></i>
+				<span>Auditoria</span>
+			</a>
+		</nav>
+
+		<section class="os-toolbar" aria-label="Acciones de orden">
+			<div class="os-counter-edit">
+				<label for="nextOrderNumber">Siguiente orden</label>
+				<input id="nextOrderNumber" type="text" inputmode="numeric" maxlength="6" value="000700">
+				<button type="button" class="os-button os-button-secondary" id="saveCounterBtn" data-permission="create_orders">
+					<i class="fas fa-save" aria-hidden="true"></i>
+					<span>Guardar</span>
+				</button>
+			</div>
+			<div class="os-counter" aria-live="polite">
+				<span>Consecutivo</span>
+				<strong id="orderNumberPreview">000700</strong>
+			</div>
+			<div class="os-actions">
+				<button type="button" class="os-button os-button-secondary" id="previewPdfBtn">
+					<i class="far fa-eye" aria-hidden="true"></i>
+					<span>Vista previa</span>
+				</button>
+				<button type="submit" class="os-button os-button-primary" form="serviceOrderForm" data-permission="create_orders">
+					<i class="far fa-file-pdf" aria-hidden="true"></i>
+					<span>Crear OS y PDF</span>
+				</button>
+				<button type="button" class="os-button os-button-ghost" id="clearFormBtn">
+					<i class="fas fa-eraser" aria-hidden="true"></i>
+					<span>Limpiar</span>
+				</button>
+			</div>
+		</section>
+
+		<form id="serviceOrderForm" class="os-form" autocomplete="on">
+			<section class="os-panel">
+				<div class="os-section-head">
+					<h2>Cliente</h2>
+					<button type="button" class="os-button os-button-secondary" data-shortcut="clientes">Buscar cliente</button>
+				</div>
+				<div class="os-selected-client" id="selectedClientBox">
+					<strong>Sin cliente seleccionado</strong>
+					<span>La orden requiere un cliente reutilizado o creado desde el modulo Clientes.</span>
+				</div>
+			</section>
+
+			<section class="os-panel">
+				<h2>Datos de la orden</h2>
+				<div class="os-grid os-grid-three">
+					<label>
+						<span>Fecha</span>
+						<input type="date" id="fecha" name="fecha" required>
+					</label>
+					<label>
+						<span>Moneda</span>
+						<select id="moneda" name="moneda">
+							<option value="USD">USD</option>
+							<option value="SOLES">SOLES</option>
+						</select>
+					</label>
+					<label>
+						<span>Duracion</span>
+						<input type="text" id="duracion" name="duracion" placeholder="12 meses">
+					</label>
+					<label>
+						<span>Tipo de servicio</span>
+						<select id="tipoServicio" name="tipoServicio">
+							<option value="Alta">Alta</option>
+							<option value="Baja">Baja</option>
+							<option value="Renovacion">Renovacion</option>
+							<option value="Renovacion Downgrade">Renovacion Downgrade</option>
+							<option value="Renovacion Upgrade">Renovacion Upgrade</option>
+							<option value="Venta unica">Venta unica</option>
+							<option value="Downgrade">Downgrade</option>
+							<option value="Upgrade">Upgrade</option>
+						</select>
+					</label>
+				</div>
+			</section>
+
+			<section class="os-panel">
+				<h2>Detalle del servicio</h2>
+				<div class="os-grid os-grid-two">
+					<label>
+						<span>Ciudad</span>
+						<input type="text" id="ciudad" name="ciudad">
+					</label>
+					<label>
+						<span>Dias de entrega</span>
+						<input type="number" id="diasEntrega" name="diasEntrega" min="0" step="1">
+					</label>
+					<label>
+						<span>Direccion origen</span>
+						<textarea id="direccionOrigen" name="direccionOrigen" rows="3"></textarea>
+					</label>
+					<label>
+						<span>Direccion destino</span>
+						<textarea id="direccionDestino" name="direccionDestino" rows="3"></textarea>
+					</label>
+					<label>
+						<span>Detalle</span>
+						<textarea id="detalle" name="detalle" rows="3"></textarea>
+					</label>
+					<label>
+						<span>Servicio</span>
+						<textarea id="servicio" name="servicio" rows="3"></textarea>
+					</label>
+					<label>
+						<span>MRC</span>
+						<input type="number" id="mrc" name="mrc" min="0" step="0.01">
+					</label>
+					<label>
+						<span>Hay costo de instalacion</span>
+						<select id="costoInstalacion" name="costoInstalacion">
+							<option value="no">No</option>
+							<option value="si">Si</option>
+						</select>
+					</label>
+					<label>
+						<span>NRC</span>
+						<input type="number" id="nrc" name="nrc" min="0" step="0.01">
+					</label>
+					<label class="os-span-two">
+						<span>Observacion</span>
+						<textarea id="observacion" name="observacion" rows="5"></textarea>
+					</label>
+					<label class="os-span-two">
+						<span>Facilidades de pago de instalacion</span>
+						<textarea id="facilidadesPago" name="facilidadesPago" rows="3"></textarea>
+					</label>
+				</div>
+			</section>
+		</form>
+
+		<section class="os-panel">
+			<div class="os-section-head">
+				<h2>Ordenes registradas</h2>
+				<div class="os-filter-group">
+					<select id="statusFilter" aria-label="Filtrar estado">
+						<option value="">Todos los estados</option>
+						<option value="Creada">Creada</option>
+						<option value="En validacion">En validacion</option>
+						<option value="Instalacion validada">Instalacion validada</option>
+						<option value="Facturacion validada">Facturacion validada</option>
+						<option value="Activada">Activada</option>
+					</select>
+				</div>
+			</div>
+			<div class="os-table-wrap">
+				<table class="os-table">
+					<thead>
+						<tr>
+							<th>OS</th>
+							<th>Cliente</th>
+							<th>Fecha</th>
+							<th>Estado</th>
+							<th>Responsable</th>
+							<th>Acciones</th>
+						</tr>
+					</thead>
+					<tbody id="ordersBody"></tbody>
+				</table>
+			</div>
+		</section>
+	</section>
+</main>
+<script src="ordenes-servicio.js?v=20260519-multipagina-v1"></script>
+</body>
+</html>

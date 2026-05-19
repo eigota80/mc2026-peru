@@ -783,3 +783,7 @@
 	border-color: var(--os-cyan);
 	box-shadow: 0 0 0 3px rgba(66, 200, 244, .14);
 }
+
+a.os-nav-button {
+	text-decoration: none;
+}
