@@ -20,6 +20,7 @@
 | `5a4bc18` | chore: release v2026.05.18 — estado aprobado |
 | *(pendiente)* | feat: modulo Cotizaciones + importacion MariaDB + usuarios sincronizados |
 | `c7e5e36` | feat: separar SPA en paginas independientes por modulo |
+| *(pendiente)* | feat: eliminar usuario + importacion MariaDB actualizada (450 clientes, 647 cot) |
 
 ---
 
@@ -43,6 +44,15 @@
 - [x] Control de acceso por rol (3 capas de proteccion)
 - [x] Reset automatico de ordenes por `DATA_VERSION`
 - [x] Boton "Reiniciar ordenes" en panel Administrador
+
+### Integracion MariaDB + eliminar usuario — 2026-05-19
+
+- [x] Importacion de 450 clientes (empresa) desde MariaDB → `importar-clientes.html` en raiz del servidor
+- [x] Importacion de 647 cotizaciones (000001-000651) con detalles → `importar-cotizaciones.html` en modulo
+- [x] Importadores actualizados con datos frescos al 2026-05-19 (antes eran 448 clientes / 647 cotizaciones)
+- [x] Funcionalidad **Eliminar usuario** en modulo Usuarios (boton papelera, con confirmacion)
+- [x] No hay Ordenes de Servicio en MariaDB — consecutivo OS 000700 confirmado correcto
+- [x] Nota obligatoria de uso via MCP documentada en README (punto 1 de Guia para AI futura)
 
 ### Arquitectura multi-pagina — 2026-05-19
 

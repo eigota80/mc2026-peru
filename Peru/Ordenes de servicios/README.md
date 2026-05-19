@@ -334,18 +334,32 @@ Incrementar el sufijo en cada deploy que modifique JS o CSS. Patron sugerido: `Y
 
 ## Guia para AI futura
 
+> **OBLIGATORIO**: Todo agente AI que trabaje en este proyecto DEBE conectarse via MCP (Media Commerce Peru MCP connector) usando las credenciales del archivo `.env` en `Peru/mcp_web_connector/`. El acceso directo via SSH o edicion de archivos sin MCP no esta permitido en modo produccion.
+
 1. **Frontend puro.** No hay servidor de aplicacion. Todo en `localStorage` del navegador.
 2. **localStorage es por navegador y por origen.** Datos en un navegador no se ven en otro. Para distribuir: usar las paginas de importacion.
 3. **Agregar usuario**: insertar en `seedUsers` + cambiar `USER_SEED_VERSION`.
-4. **Forzar reset de ordenes**: cambiar `DATA_VERSION`.
-5. **Deploy**: rsync + corrección de directorio + actualizar `?v=` en TODOS los archivos HTML.
-6. **Conectar a MariaDB**: usar credenciales de la seccion Importacion. La clave de DB es `Gestecno**`.
-7. **Cotizaciones vs Ordenes**: son modulos separados con claves de localStorage y consecutivos distintos.
-8. **El PDF** no usa canvas para el logo (falla en `file://`). El logo esta como base64 en `LOGO_B64`.
-9. **Agregar campo al formulario**: HTML en la pagina correspondiente → `cotizacionFromForm()` o `getOrderFormData()` → `prepareCotPdfData()` o `preparePdfData()` → funcion PDF.
-10. **Coordenadas PDF**: en puntos (pt). La funcion `y(top)` convierte coordenadas de arriba-abajo a sistema PDF (abajo-arriba).
-11. **`buildCotizacionContent()`** soporta max 10 lineas de servicio en una pagina.
-12. **MariaDB desde AI**: `sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no root@179.43.82.54 'mysql -u root -pGestecno** bdmcperu -e "..."'`
-13. **Arquitectura multi-pagina**: cada modulo es una pagina HTML separada. La navegacion usa `navigateTo(name)` en JS. El nav usa `<a href>` no `<button data-view>`. Para agregar una pagina nueva: crear HTML con mismo header/nav + agregar caso en `getCurrentPage()`, `navigateTo()`, y `renderAll()`.
-14. **Elemento no existe en pagina X**: todos los `els.xxx` pueden ser null. Los renders y wireEvents tienen null guards. Nunca acceder `els.xxx.algo` sin verificar `if (els.xxx)`.
-15. **`clientes.html` en Linux**: el archivo fisico en git es `Clientes.html` (capital C). Al hacer deploy, copiar en el servidor: `cp Clientes.html clientes.html`.
+4. **Eliminar usuario**: boton de icono papelera en tabla Usuarios → `deleteUser(id)`. No se puede eliminar el usuario activo.
+5. **Forzar reset de ordenes**: cambiar `DATA_VERSION`.
+6. **Deploy**: rsync + corrección de directorio + actualizar `?v=` en TODOS los archivos HTML.
+7. **Conectar a MariaDB**: usar credenciales de la seccion Importacion. La clave de DB es `Gestecno**`.
+8. **Cotizaciones vs Ordenes**: son modulos separados con claves de localStorage y consecutivos distintos.
+9. **El PDF** no usa canvas para el logo (falla en `file://`). El logo esta como base64 en `LOGO_B64`.
+10. **Agregar campo al formulario**: HTML en la pagina correspondiente → `cotizacionFromForm()` o `getOrderFormData()` → `prepareCotPdfData()` o `preparePdfData()` → funcion PDF.
+11. **Coordenadas PDF**: en puntos (pt). La funcion `y(top)` convierte coordenadas de arriba-abajo a sistema PDF (abajo-arriba).
+12. **`buildCotizacionContent()`** soporta max 10 lineas de servicio en una pagina.
+13. **MariaDB desde AI**: `sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no root@179.43.82.54 'mysql -u root -pGestecno** bdmcperu -e "..."'`
+14. **Arquitectura multi-pagina**: cada modulo es una pagina HTML separada. La navegacion usa `navigateTo(name)` en JS. El nav usa `<a href>` no `<button data-view>`. Para agregar una pagina nueva: crear HTML con mismo header/nav + agregar caso en `getCurrentPage()`, `navigateTo()`, y `renderAll()`.
+15. **Elemento no existe en pagina X**: todos los `els.xxx` pueden ser null. Los renders y wireEvents tienen null guards. Nunca acceder `els.xxx.algo` sin verificar `if (els.xxx)`.
+16. **`clientes.html` en Linux**: el archivo fisico en git es `Clientes.html` (capital C). Al hacer deploy, copiar en el servidor: `cp Clientes.html clientes.html`.
+17. **NO hay Ordenes de Servicio en MariaDB.** La tabla `cotizacion` contiene cotizaciones (000001-000651). Las OS son nuevas, empiezan en 000700 en localStorage. No confundir.
+18. **Importacion MariaDB**: re-generar los HTML de importacion desde `/tmp/*.tsv` si los datos cambian. Ver seccion "Importacion desde MariaDB" en este README.
+
+### MariaDB — esquema relevante (2026-05-19)
+
+| Tabla | Registros | Campos clave |
+|---|---|---|
+| `empresa` | 450 | `id`, `rsocial`, `nroid` (RUC), `nombre` (rep.legal), `domicilio`, `tel1`, `contec` (c.tecnico), `cadmin` (c.admin) |
+| `cotizacion` | 827 (648 con correlativo 000001-000651) | `id`, `empresa_id`, `numerocorrelativo`, `fecha`, `rsocial`, `nroidentificacion`, `moneda` (1=SOLES/2=DOLARES), `tipo` (1-13), `estado` (1=CERRADO/2=ANULADO/3=NUEVO/4=PEND.ANULACION) |
+| `cotizacion_detalle` | 770 | `cotizacion_id`, `ciudad`, `servicio`, `renta`, `dias_entrega`, `direccion_o`, `direccion_d`, `detalle` |
+| `cotizacion_tipo` | 13 | `1=TRASLADO`, `3=ALTA`, `6=RENOVACION`, `7=REN.UPGRADE`, `8=REN.DOWNGRADE`, etc. |

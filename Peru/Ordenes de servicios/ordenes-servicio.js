@@ -863,9 +863,14 @@
 				<td>${escapeHtml(getRole(user).label)}</td>
 				<td><span class="os-status">${escapeHtml(user.estado)}</span></td>
 				<td>
-					<button type="button" class="os-button os-button-secondary" data-toggle-user="${escapeHtml(user.id)}" ${user.id === currentUser.id ? 'disabled' : ''}>
-						${user.estado === 'activo' ? 'Inactivar' : 'Activar'}
-					</button>
+					<div class="os-row-actions">
+						<button type="button" class="os-button os-button-secondary" data-toggle-user="${escapeHtml(user.id)}" ${user.id === currentUser.id ? 'disabled' : ''}>
+							${user.estado === 'activo' ? 'Inactivar' : 'Activar'}
+						</button>
+						<button type="button" class="os-button os-button-ghost" data-delete-user="${escapeHtml(user.id)}" ${user.id === currentUser.id ? 'disabled' : ''} title="Eliminar usuario">
+							<i class="fas fa-trash-alt" aria-hidden="true"></i>
+						</button>
+					</div>
 				</td>
 			</tr>
 		`).join('');
@@ -948,6 +953,23 @@
 		users[index].estado = users[index].estado === 'activo' ? 'inactivo' : 'activo';
 		saveUsers(users);
 		audit('cambio estado usuario', users[index].email);
+		renderAll();
+	}
+
+	function deleteUser(id) {
+		if (!hasPermission('manage_users') || id === currentUser.id) {
+			return;
+		}
+		const users = getUsers();
+		const user = users.find((u) => u.id === id);
+		if (!user) {
+			return;
+		}
+		if (!window.confirm(`Eliminar permanentemente al usuario "${user.nombre}" (${user.email})?\n\nEsta accion no se puede deshacer.`)) {
+			return;
+		}
+		saveUsers(users.filter((u) => u.id !== id));
+		audit('elimino usuario', user.email);
 		renderAll();
 	}
 
@@ -1337,8 +1359,10 @@
 		if (els.userForm) { els.userForm.addEventListener('submit', createUser); }
 		if (els.usersBody) {
 			els.usersBody.addEventListener('click', (event) => {
-				const button = event.target.closest('[data-toggle-user]');
-				if (button) { toggleUser(button.dataset.toggleUser); }
+				const toggleBtn = event.target.closest('[data-toggle-user]');
+				if (toggleBtn) { toggleUser(toggleBtn.dataset.toggleUser); }
+				const deleteBtn = event.target.closest('[data-delete-user]');
+				if (deleteBtn) { deleteUser(deleteBtn.dataset.deleteUser); }
 			});
 		}
 		const resetBtn = byId('resetOrdersBtn');
