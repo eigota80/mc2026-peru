@@ -4,7 +4,7 @@
   <!-- === INICIO === -->
   <url>
     <loc>https://www.mcperu.pe/</loc>
-    <lastmod>2026-05-19</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.00</priority>
   </url>
@@ -26,33 +26,41 @@
   <!-- === SOLUCIONES === -->
   <url>
     <loc>https://www.mcperu.pe/soluciones.html</loc>
-    <lastmod>2026-04-29</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.90</priority>
   </url>
   <url>
     <loc>https://www.mcperu.pe/soluciones/connection.html</loc>
-    <lastmod>2026-04-29</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://www.mcperu.pe/soluciones/cloud.html</loc>
-    <lastmod>2026-04-29</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://www.mcperu.pe/soluciones/collaboration.html</loc>
-    <lastmod>2026-04-29</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://www.mcperu.pe/soluciones/security.html</loc>
-    <lastmod>2026-04-29</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
+  </url>
+
+  <!-- === LANDING CORPORATIVAS === -->
+  <url>
+    <loc>https://www.mcperu.pe/internet-corporativo-peru.html</loc>
+    <lastmod>2026-05-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.90</priority>
   </url>
 
   <!-- === COBERTURA Y HERRAMIENTAS === -->
@@ -64,7 +72,7 @@
   </url>
   <url>
     <loc>https://www.mcperu.pe/velocimetro.html</loc>
-    <lastmod>2026-04-29</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.50</priority>
   </url>
@@ -116,31 +124,31 @@
   <!-- === ASESORAMIENTO === -->
   <url>
     <loc>https://www.mcperu.pe/asesoramiento.html</loc>
-    <lastmod>2026-04-29</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.70</priority>
   </url>
   <url>
     <loc>https://www.mcperu.pe/asesoramiento/informacion-tecnica.html</loc>
-    <lastmod>2026-04-29</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://www.mcperu.pe/asesoramiento/preguntas-frecuentes.html</loc>
-    <lastmod>2026-04-29</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://www.mcperu.pe/asesoramiento/seguridad.html</loc>
-    <lastmod>2026-04-29</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://www.mcperu.pe/asesoramiento/tips-de-seguridad.html</loc>
-    <lastmod>2026-04-29</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
   </url>
@@ -148,7 +156,7 @@
   <!-- === NORMATIVIDAD === -->
   <url>
     <loc>https://www.mcperu.pe/normas-y-regulaciones.html</loc>
-    <lastmod>2026-04-29</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
   </url>
@@ -168,13 +176,13 @@
   <!-- === CONTACTO Y SOPORTE === -->
   <url>
     <loc>https://www.mcperu.pe/contactanos.html</loc>
-    <lastmod>2026-04-29</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
   <url>
     <loc>https://www.mcperu.pe/pqrs.html</loc>
-    <lastmod>2026-04-29</lastmod>
+    <lastmod>2026-05-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.60</priority>
   </url>
