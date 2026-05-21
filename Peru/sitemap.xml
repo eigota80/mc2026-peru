@@ -62,6 +62,12 @@
     <changefreq>monthly</changefreq>
     <priority>0.90</priority>
   </url>
+  <url>
+    <loc>https://www.mcperu.pe/internet-dedicado-peru.html</loc>
+    <lastmod>2026-05-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.90</priority>
+  </url>
 
   <!-- === COBERTURA Y HERRAMIENTAS === -->
   <url>
