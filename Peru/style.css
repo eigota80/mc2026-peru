@@ -1014,11 +1014,15 @@ footer {
 
 .home-hero {
 	position: relative;
-	background-image: url("images/custom/index/home/home-hero-tech-2026.png?v=20260429") !important;
+	background-image: url("images/custom/index/home/home-hero-tech-2026.jpg?v=20260521") !important;
 	background-position: center 28%;
 	background-size: cover;
 	background-repeat: no-repeat;
 	isolation: isolate;
+}
+
+.webp .home-hero {
+	background-image: url("images/custom/index/home/home-hero-tech-2026.webp?v=20260521") !important;
 }
 
 .home-1:before {
