@@ -20,8 +20,6 @@ Disallow: /Ordenes%20de%20servicios/auditoria.html
 Disallow: /Ordenes%20de%20servicios/Clientes.html
 Disallow: /Ordenes%20de%20servicios/cotizaciones.html
 Disallow: /Ordenes%20de%20servicios/informes.html
-Disallow: /importar-clientes.html
-
 # Páginas de confirmación y utilidades (noindex en HTML también)
 Disallow: /gracias.html
 Disallow: /encuesta-de-satisfaccion.html
