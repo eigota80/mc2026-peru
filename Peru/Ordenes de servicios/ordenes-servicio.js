@@ -557,7 +557,7 @@
 	function getCurrentPage() {
 		const path = window.location.pathname;
 		if (path.includes('dashboard.html')) { return 'dashboard'; }
-		if (path.includes('clientes.html')) { return 'clientes'; }
+		if (path.includes('clientes.html') || path.includes('Clientes.html')) { return 'clientes'; }
 		if (path.includes('ordenes.html')) { return 'ordenes'; }
 		if (path.includes('cotizaciones.html')) { return 'cotizaciones'; }
 		if (path.includes('usuarios.html')) { return 'usuarios'; }
@@ -568,7 +568,7 @@
 
 	function navigateTo(name) {
 		if (['usuarios', 'auditoria'].includes(name) && !hasPermission('manage_users')) { return; }
-		const pages = { home: 'index.html', dashboard: 'dashboard.html', clientes: 'clientes.html', ordenes: 'ordenes.html', cotizaciones: 'cotizaciones.html', usuarios: 'usuarios.html', auditoria: 'auditoria.html', informes: 'informes.html' };
+		const pages = { home: 'index.html', dashboard: 'dashboard.html', clientes: 'Clientes.html', ordenes: 'ordenes.html', cotizaciones: 'cotizaciones.html', usuarios: 'usuarios.html', auditoria: 'auditoria.html', informes: 'informes.html' };
 		window.location.href = pages[name] || 'index.html';
 	}
 
