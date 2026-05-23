@@ -21,7 +21,7 @@ Estas instrucciones aplican a todo el proyecto `Peru`.
 - Las paginas publicas deben tener title unico, meta description orientada al clic, canonical coherente, Open Graph/Twitter basico, un H1 claro y enlaces internos hacia servicios o conversion.
 - No incluir en `sitemap.xml` paginas internas, administrativas, de confirmacion, APIs, plantillas PHP, bases de datos, logs, backups ni herramientas de importacion.
 - Mantener `noindex,nofollow` en paginas de confirmacion o utilidad como `gracias.html` y `encuesta-de-satisfaccion.html`.
-- Mantener fuera de indexacion el panel `Ordenes de servicios/`, excepto la pagina de login si el negocio decide conservarla publica.
+- Mantener fuera de indexacion el panel `ordenes/`, excepto la pagina de login si el negocio decide conservarla publica.
 - En contenido para Peru, preferir terminos naturales como proveedor, cotizar, empresas peruanas, cobertura nacional, soporte local, SLA, fibra optica, RUC y sectores empresariales solo cuando apliquen.
 
 ## Seguridad Y Produccion

@@ -24,7 +24,7 @@ Modulo comercial completo. Frontend puro: HTML + CSS + JS. Sin backend, sin libr
 ## Estructura de archivos
 
 ```
-Ordenes de servicios/
+ordenes/
 ├── ordenes-servicio.html      # Login (pagina de entrada publica)
 ├── login.js                   # Logica de autenticacion
 ├── index.html                 # Home — panel de acceso rapido
@@ -264,7 +264,7 @@ La base `bdmcperu` en `179.43.82.54` contiene el historial comercial completo.
 # Eliminar paginas de importacion del servidor
 sshpass -p "M3d14C0msvc" ssh -o PasswordAuthentication=yes root@179.43.82.54 \
   "rm -f /var/www/html/importar-clientes.html \
-         '/var/www/html/Ordenes de servicios/importar-cotizaciones.html'"
+         '/var/www/html/ordenes/importar-cotizaciones.html'"
 ```
 
 ### Credenciales de acceso — MariaDB
@@ -305,19 +305,19 @@ Produccion: `https://www.mcperu.pe` → Apache en `/var/www/html/`
 ```bash
 # 1. Subir archivos
 sshpass -p "M3d14C0msvc" rsync -avz \
-  "Peru/Ordenes de servicios/ordenes-servicio.js" \
-  "Peru/Ordenes de servicios/ordenes-servicio.css" \
-  "Peru/Ordenes de servicios/index.html" \
-  root@179.43.82.54:'/var/www/html/Ordenes de servicios/'
+  "Peru/ordenes/ordenes-servicio.js" \
+  "Peru/ordenes/ordenes-servicio.css" \
+  "Peru/ordenes/index.html" \
+  root@179.43.82.54:'/var/www/html/ordenes/'
 
 # 2. Corregir nombre de directorio (rsync elimina espacios)
 sshpass -p "M3d14C0msvc" ssh -o PasswordAuthentication=yes root@179.43.82.54 \
-  'cp -r "/var/www/html/Ordenes/." "/var/www/html/Ordenes de servicios/" && rm -rf "/var/www/html/Ordenes"'
+  'cp -r "/var/www/html/Ordenes/." "/var/www/html/ordenes/" && rm -rf "/var/www/html/Ordenes"'
 ```
 
 ### Problema conocido: rsync y espacios
 
-rsync transfiere `Ordenes de servicios/` como `Ordenes/`. El paso 2 es obligatorio en cada deploy.
+rsync transfiere `ordenes/` como `Ordenes/`. El paso 2 es obligatorio en cada deploy.
 
 ---
 

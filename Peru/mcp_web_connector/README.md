@@ -365,7 +365,7 @@ El archivo `.env` del conector esta en `.gitignore` y nunca se sube al repositor
 
 ## Conexion con Ordenes de Servicio
 
-El sistema `Peru/Ordenes de servicios/` opera en `localStorage` y no requiere backend. Sus cambios siguen el mismo flujo WebOps:
+El sistema `Peru/ordenes/` opera en `localStorage` y no requiere backend. Sus cambios siguen el mismo flujo WebOps:
 
 - Cambios en `ordenes-servicio.js` → branch + PR + staging preview + aprobacion + merge
 - Actualizacion del logo (`LOGO_B64`) → mismo flujo

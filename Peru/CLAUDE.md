@@ -87,7 +87,7 @@ Si falla, detener y reportar al usuario.
 ```
 Peru/
 ├── CLAUDE.md                    ← Este archivo (instrucciones para IA)
-├── AGENTS.md                    ← Instrucciones adicionales de agentes (SEO, seguridad)
+├── AGENTS.md                    ← Instrucciones de agentes (SEO, seguridad)
 ├── index.html                   ← Home del sitio público
 ├── style.css                    ← Estilos globales del sitio
 ├── sitemap.xml                  ← Sitemap de producción
@@ -95,49 +95,78 @@ Peru/
 ├── service-worker.js            ← PWA cache
 │
 ├── css/                         ← Estilos externos (Jarvis, FancyBox, Color)
-├── js/                          ← Scripts externos y ordenes-servicio.js
+├── js/                          ← Scripts externos del sitio público
 ├── fonts/                       ← Tipografías locales
 ├── images/                      ← Imágenes del sitio
+│   ├── controls/                ← Logos, íconos, nav, footer
+│   ├── custom/                  ← Imágenes por página (index/, no-index/)
+│   └── system/                  ← Favicons, app-icons, manifest
 ├── error/                       ← Páginas de error personalizadas
 │
-├── Ordenes de servicios/        ← Panel interno (NO indexar en sitemap)
-│   ├── login.js
-│   ├── ordenes-servicio.js      ← Lógica principal del módulo
-│   ├── ordenes-servicio.css
+├── ordenes/                     ← Panel interno (NUNCA indexar en sitemap)
 │   ├── ordenes-servicio.html    ← Vista principal de órdenes
+│   ├── ordenes-servicio.js      ← Lógica principal del módulo
+│   ├── ordenes-servicio.css     ← Estilos del panel
+│   ├── login.js
 │   ├── dashboard.html
 │   ├── cotizaciones.html
 │   ├── Clientes.html
 │   ├── usuarios.html
 │   ├── auditoria.html
 │   ├── informes.html
+│   ├── importar-clientes.html   ← Herramienta interna de importación
 │   ├── importar-ordenes.html
-│   └── importar-cotizaciones.html
+│   ├── importar-cotizaciones.html
+│   └── backend/                 ← Backend Python experimental (local)
+│       ├── app.py
+│       └── db.py
 │
-├── api/                         ← Backend PHP REST
+├── api/                         ← Backend PHP REST (producción en Apache)
 │   ├── config.php               ← Conexión MariaDB
 │   ├── ordenes.php
 │   ├── cotizaciones.php
 │   └── clientes.php
 │
-├── database/
-│   └── ordenes_servicio_schema.sql
+├── database/                    ← Schemas SQL de referencia
+│   ├── ordenes_servicio_schema.sql
+│   └── mariadb_schema.sql
+│
+├── php/                         ← Scripts PHP de formularios públicos
+│   ├── contacto/send.php
+│   ├── encuesta/send.php
+│   ├── pqrs/send.php
+│   ├── library/                 ← PHPMailer y dependencias
+│   ├── templates/               ← Plantillas HTML de email
+│   └── logs/
+│
+├── logs/                        ← Datos de formularios (CSV) y auditoría local
+│   └── account/data/            ← contacto.csv, encuesta, pqrs, segmento
 │
 ├── mcp_web_connector/           ← MCP local (PUNTO DE ENTRADA OBLIGATORIO)
-│   ├── server.py                ← Servidor MCP (stdio)
+│   ├── server.py                ← Servidor MCP (stdio, JSON-RPC 2.0)
 │   ├── SKILLS.md                ← Catálogo completo de skills
-│   ├── README.md                ← Instalación y flujo de deploy
+│   ├── README.md                ← Instalación, seguridad y flujo de deploy
 │   ├── .env                     ← Credenciales (NO en git)
 │   ├── mcp-config.example.json  ← Config de ejemplo para Claude Code
 │   ├── requirements.txt
 │   ├── .venv/                   ← Entorno virtual Python
 │   ├── agents/                  ← Skills de agentes especializados
 │   │   ├── SKILL.md             ← Skill SEO especialista
-│   │   └── references/          ← Referencias SEO (checklists, latam, remediation)
-│   └── scripts/                 ← Scripts de configuración del servidor
+│   │   ├── openai.yaml          ← Config agente OpenAI
+│   │   ├── references/          ← Referencias SEO (checklists, latam, remediation)
+│   │   └── scripts/             ← Scripts Python de análisis SEO
+│   └── scripts/                 ← Scripts de configuración del servidor remoto
 │
-├── seo/                         ← Auditorías y backlinks
-├── logs/                        ← Logs locales
+├── seo/                         ← Auditorías y estrategia de backlinks
+│   ├── auditoria-seo-2026-05-21.md
+│   └── backlinks/
+│
+├── MenuBar/                     ← CSS de componente MenuBar (legado)
+│
+├── blog/                        ← Artículos del blog público
+├── asesoramiento/               ← Subpáginas de asesoramiento
+├── soluciones/                  ← Subpáginas de soluciones
+├── normatividad-y-regulaciones/ ← Subpáginas regulatorias
 │
 └── [páginas HTML públicas]      ← index, soluciones, cobertura, contactanos, etc.
 ```
@@ -149,7 +178,7 @@ Peru/
 - Módulo interno accesible solo por usuarios autenticados.
 - Datos de órdenes en `localStorage` del navegador (consecutivo desde 000700).
 - Cotizaciones y clientes en MariaDB (`bdmcperu`): tablas `cotizacion`, `cotizacion_detalle`, `empresa`.
-- **No incluir ninguna URL de `Ordenes de servicios/` en `sitemap.xml`.**
+- **No incluir ninguna URL de `ordenes/` en `sitemap.xml`.**
 - **Mantener `noindex,nofollow`** en todas las páginas del panel.
 - Consultas a la BD solo via MCP skill `mysql_query_readonly`.
 - Migración futura a MariaDB requiere implementar `F-04 mysql_write` (ver SKILLS.md).
@@ -222,4 +251,4 @@ Peru/
 
 ---
 
-*Última actualización: 2026-05-23 — Documentación inicial completa + regla MCP obligatorio*
+*Última actualización: 2026-05-23 — Reorganización de carpetas + estructura final documentada*

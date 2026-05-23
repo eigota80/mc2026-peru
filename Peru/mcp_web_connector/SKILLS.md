@@ -56,7 +56,7 @@ Lista archivos de un directorio remoto via SFTP.
 {
   "name": "remote_list",
   "arguments": {
-    "path": "/var/www/html/Ordenes de servicios",
+    "path": "/var/www/html/ordenes",
     "max_entries": 100
   }
 }
@@ -80,7 +80,7 @@ Lee el contenido de un archivo de texto remoto.
 {
   "name": "remote_read_text",
   "arguments": {
-    "path": "/var/www/html/Ordenes de servicios/ordenes-servicio.js",
+    "path": "/var/www/html/ordenes/ordenes-servicio.js",
     "max_bytes": 50000
   }
 }
