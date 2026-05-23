@@ -1,5 +1,7 @@
 # Instrucciones Para Agentes
 
+> **REGLA DE ORO — MCP OBLIGATORIO:** Toda IA que opere en este proyecto debe usar el MCP `mcperu-web` para acceder al servidor remoto o a la base de datos. El acceso directo via SSH, SCP, FTP o cliente de base de datos está terminantemente prohibido. Ver `CLAUDE.md` para la documentación completa.
+
 Estas instrucciones aplican a todo el proyecto `Peru`.
 
 ## Skill SEO Del Proyecto
