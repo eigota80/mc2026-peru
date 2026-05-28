@@ -197,6 +197,7 @@ PDF generado en JavaScript puro, sin librerias. Motor: `buildPdf()` + `buildServ
 - Formato A4: 595.276 x 841.89 pt
 - Logo embebido como base64 en la constante `LOGO_B64` (linea ~18 del JS)
 - Fuentes: Helvetica (`F1` normal, `F2` bold)
+- PDF de orden de servicio: imprime `Duracion del contrato` desde el campo `duracion` antes de la tabla de detalle.
 - PDF de cotizacion: hasta 10 lineas de servicio en una pagina
 
 Para regenerar el logo base64 (si cambia el archivo PNG):
@@ -329,6 +330,8 @@ rsync transfiere `ordenes/` como `Ordenes/`. El paso 2 es obligatorio en cada de
 ```
 
 Incrementar el sufijo en cada deploy que modifique JS o CSS. Patron sugerido: `YYYYMMDD-descripcion-vN`.
+
+Version JS vigente para el fix de duracion en PDF de OS: `20260528-pdf-duracion-v1`.
 
 ---
 

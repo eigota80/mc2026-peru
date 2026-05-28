@@ -1911,8 +1911,11 @@
 		line(margin, 238, right, 238, '#000000', .65);
 		labelValue(31.18, 253, 'Moneda de negociacion', data.moneda, 250, 9);
 		labelValue(300.47, 253, 'Tipo de servicio', data.tipoServicio, 250, 9);
+		if (data.duracion) {
+			labelValue(31.18, 267, 'Duracion del contrato', data.duracion, 250, 9);
+		}
 
-		const tableTop = 274;
+		const tableTop = 290;
 		const headerHeight = 24.5;
 		const rowHeight = 91;
 		const widths = [50, 86, 120, 90, 60, 45, 45, 43];
