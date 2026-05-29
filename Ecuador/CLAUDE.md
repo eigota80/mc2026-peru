@@ -7,13 +7,12 @@
 ## Índice
 
 1. [Identidad del proyecto](#identidad)
-2. [Regla de uso exclusivo del MCP](#mcp-obligatorio)
-3. [Estructura del proyecto](#estructura)
-4. [Servidor de producción](#servidor)
-5. [Páginas SEO creadas](#paginas-seo)
-6. [Identidad Ecuador vs. Perú](#diferencias)
-7. [Flujo de trabajo y deploy](#flujo-de-trabajo)
-8. [Tareas pendientes](#pendientes)
+2. [MCP Obligatorio — regla principal](#mcp-obligatorio)
+3. [Cómo hacer deploy — paso a paso](#deploy)
+4. [Estructura del proyecto](#estructura)
+5. [Páginas SEO en producción](#paginas-seo)
+6. [Diferencias Ecuador vs. Perú](#diferencias)
+7. [Tareas pendientes](#pendientes)
 
 ---
 
@@ -33,11 +32,10 @@
 
 | Canal | Dato |
 |---|---|
-| Email principal | `servicioalcliente@mediacommerce.ec` |
+| Email | `servicioalcliente@mediacommerce.ec` |
 | Teléfono fijo | `+593 (2) 394 2280 A 2289` |
 | Línea gratuita | `01 800 633 423` |
-| Celular 1 | `+593 98 759 2186` |
-| Celular 2 | `+593 98 786 1855` |
+| Celular | `+593 98 759 2186` / `+593 98 786 1855` |
 | WhatsApp | `https://wa.me/593987592186` |
 | Webmail | `https://webmail.mediacommerce.ec` |
 
@@ -55,192 +53,204 @@
 
 ## MCP Obligatorio
 
-**Ninguna IA puede acceder ni modificar el servidor de Ecuador sin pasar por el MCP `mcecuador-web`.**
+**Ninguna IA puede acceder ni modificar el servidor Ecuador sin pasar por el MCP `mcecuador-web`.**
 
-### Servidor de producción
+### Datos reales del servidor (confirmados en producción)
 
 | Parámetro | Valor |
 |---|---|
-| **IP** | `51.79.104.194` |
+| **Hostname** | `hc-02.webserver.ec` |
+| **IP** | `51.79.106.41` |
 | **Puerto SSH** | `22` |
-| **Protocolo** | SSH + SFTP (cPanel hosting, Apache) |
-| **cPanel** | `https://51.79.104.194:2083/` |
-| **Web root** | `/home/<usuario_cpanel>/public_html/` |
-| **SSH previo confirmado** | `mediacommerce.ec` en `~/.ssh/known_hosts` |
+| **Usuario SSH** | `mediaco2` |
+| **Llave privada** | `~/.ssh/mc2026/mcecuador-mediaco2-rsa` |
+| **Web root** | `/home/mediaco2/public_html/` |
+| **Tipo hosting** | cPanel (Apache) |
+| **cPanel** | `https://hc-02.webserver.ec:2083/` |
+| **Estado** | ✅ Conectado y verificado 2026-05-28 |
 
 ### Configuración del MCP
 
 | Parámetro | Valor |
 |---|---|
-| Servidor | `Ecuador/mcp_web_connector/server.py` |
+| Servidor Python | `Ecuador/mcp_web_connector/server.py` |
 | Protocolo | stdio JSON-RPC 2.0 (MCP 2024-11-05) |
 | ID en Claude Code | `mcecuador-web` |
-| Config de ejemplo | `Ecuador/mcp_web_connector/mcp-config.example.json` |
+| Config Claude Code | `Ecuador/mcp_web_connector/mcp-config.example.json` |
 | Credenciales | `Ecuador/mcp_web_connector/.env` |
-
-### Pasos para activar el MCP (primera vez)
-
-```bash
-# 1. Instalar dependencias (si no existe .venv)
-cd Ecuador/mcp_web_connector
-python3 -m venv .venv
-.venv/bin/pip install -r requirements.txt
-
-# 2. Completar credenciales
-cp .env.example .env
-# Editar .env con usuario SSH y contraseña o llave privada
-# MCP_WEB_SSH_USER=root  (o usuario cPanel)
-# MCP_WEB_SSH_PASSWORD=tu_contraseña
-
-# 3. Registrar en Claude Code
-# Settings → MCP Servers → Add from file → mcp-config.example.json
-# O agregar manualmente el bloque de mcp-config.example.json
-
-# 4. Verificar conexión
-# Skill: config_summary → debe retornar ssh_host=51.79.104.194
-# Skill: ssh_health   → debe retornar hostname y whoami del servidor
-```
-
-### Skills disponibles (usar estas, no alternativas directas)
-
-| Skill | Qué hace |
-|---|---|
-| `config_summary` | Verifica que el .env cargó correctamente |
-| `ssh_health` | Prueba SSH y retorna info del servidor (hostname, PHP, disco) |
-| `get_server_host_key` | Obtiene la host key del servidor para verificación estricta |
-| `remote_list` | Lista archivos de un directorio remoto vía SFTP |
-| `remote_read_text` | Lee un archivo de texto del servidor |
-| `remote_write_text` | **Escribe/reemplaza un archivo en el servidor** (con backup automático en /tmp) |
-| `remote_write_binary` | Sube archivos binarios (imágenes, fuentes) al servidor |
-| `remote_deploy_files` | **Despliega múltiples archivos en una sola llamada** |
-| `remote_exec` | Ejecuta comandos permitidos (ls, cp, chmod, service reload…) |
-
-### Flujo de deploy estándar
-
-```
-1. config_summary   → verificar que .env cargó
-2. ssh_health       → confirmar servidor activo
-3. remote_list      → ver web root en servidor
-4. remote_deploy_files → subir archivos locales modificados
-5. remote_list      → confirmar que los archivos llegaron
-```
+| venv | `Ecuador/mcp_web_connector/.venv/` |
 
 ### Lo que está PROHIBIDO hacer directamente
 
 ```
-✗  ssh root@51.79.104.194  (sin MCP)
+✗  ssh mediaco2@hc-02.webserver.ec  (sin MCP)
 ✗  sftp / scp / rsync directos al servidor
 ✗  FTP con FileZilla u otro cliente
 ✗  cPanel File Manager manual
 ✗  curl/wget para escribir en el servidor
-✗  Cualquier acceso a /etc/shadow, /root, .env de producción
 ```
 
-### Verificación inicial obligatoria
+---
 
-Antes de cualquier tarea que involucre el servidor, ejecutar:
+## Deploy — Cómo actualizar el sitio
+
+### Verificación inicial (ejecutar SIEMPRE primero)
 
 ```json
 { "name": "config_summary" }
 ```
+Debe retornar `ssh_host: "hc-02.webserver.ec"`. Si falla, revisar `.env`.
 
-Si falla (error de conexión), revisar `.env` y reportar al usuario.
+```json
+{ "name": "ssh_health" }
+```
+Confirma que el servidor está activo. Retorna hostname, PHP, disco.
+
+### Ver archivos actuales en el servidor
+
+```json
+{
+  "name": "remote_list",
+  "arguments": {
+    "path": "/home/mediaco2/public_html",
+    "max_entries": 100
+  }
+}
+```
+
+### Subir UN archivo
+
+```json
+{
+  "name": "remote_write_text",
+  "arguments": {
+    "path": "/home/mediaco2/public_html/nombre-del-archivo.html",
+    "content": "<contenido completo del archivo HTML>"
+  }
+}
+```
+Hace backup automático del archivo anterior en `/tmp/mcp_backup/` antes de sobreescribir.
+
+### Subir MÚLTIPLES archivos (deploy batch)
+
+```json
+{
+  "name": "remote_deploy_files",
+  "arguments": {
+    "files_json": "[
+      {\"local\": \"/Users/eidergonzaleztamara/Documents/web side/MC_2026/Ecuador/internet-corporativo-ecuador.html\",
+       \"remote\": \"/home/mediaco2/public_html/internet-corporativo-ecuador.html\"},
+      {\"local\": \"/Users/eidergonzaleztamara/Documents/web side/MC_2026/Ecuador/index.html\",
+       \"remote\": \"/home/mediaco2/public_html/index.html\"}
+    ]"
+  }
+}
+```
+
+### Verificar que los archivos llegaron
+
+```json
+{
+  "name": "remote_list",
+  "arguments": {
+    "path": "/home/mediaco2/public_html",
+    "max_entries": 100
+  }
+}
+```
+
+### Leer un archivo del servidor (para comparar)
+
+```json
+{
+  "name": "remote_read_text",
+  "arguments": {
+    "path": "/home/mediaco2/public_html/index.html"
+  }
+}
+```
+
+### Flujo completo recomendado
+
+```
+1. config_summary      → verificar que .env cargó
+2. ssh_health          → confirmar servidor activo
+3. remote_list         → ver estado actual
+4. [editar archivos localmente]
+5. remote_deploy_files → subir archivos modificados
+6. remote_list         → confirmar que llegaron
+7. git commit          → guardar en repositorio
+```
 
 ---
 
-## Estructura
+## Estructura del proyecto
 
 ```
 Ecuador/
-├── CLAUDE.md                              ← Este archivo (instrucciones para IA)
+├── CLAUDE.md                              ← Este archivo (leer antes de trabajar)
 ├── RELEASE.md                             ← Historial de versiones
-├── index.html                             ← Home del sitio público
-├── style.css                              ← Estilos globales del sitio
+├── index.html                             ← Home del sitio
+├── style.css                              ← Estilos globales
 ├── sitemap.xml                            ← Sitemap de producción
-├── .htaccess                              ← Reglas Apache (no modificar sin rev.)
+├── .htaccess                              ← Reglas Apache
 │
-├── mcp_web_connector/                     ← MCP local (PUNTO DE ENTRADA OBLIGATORIO)
-│   ├── server.py                          ← Servidor MCP v0.1.0 (stdio, JSON-RPC 2.0)
-│   ├── requirements.txt                   ← paramiko, sshtunnel, pymysql
+├── mcp_web_connector/                     ← ⚠️ PUNTO DE ENTRADA OBLIGATORIO
+│   ├── server.py                          ← Servidor MCP v0.1.0
 │   ├── .env                               ← Credenciales reales (NO en git)
-│   ├── .env.example                       ← Template de .env
+│   ├── .env.example                       ← Template
 │   ├── mcp-config.example.json            ← Config para Claude Code
-│   ├── README.md                          ← Instalación, skills y flujo de deploy
-│   └── .venv/                             ← Entorno virtual Python (local, no en git)
+│   ├── requirements.txt                   ← paramiko, sshtunnel, pymysql
+│   ├── README.md                          ← Documentación detallada del MCP
+│   └── .venv/                             ← Entorno virtual Python (no en git)
 │
-├── internet-corporativo-ecuador.html      ← ✅ SEO — creada 2026-05-28
-├── internet-dedicado-ecuador.html         ← ✅ SEO — creada 2026-05-28
-├── canales-de-datos-ecuador.html          ← ✅ SEO — creada 2026-05-28
-├── fibra-optica-empresas-ecuador.html     ← ✅ SEO — creada 2026-05-28
+├── internet-corporativo-ecuador.html      ← ✅ SEO producción 2026-05-28
+├── internet-dedicado-ecuador.html         ← ✅ SEO producción 2026-05-28
+├── canales-de-datos-ecuador.html          ← ✅ SEO producción 2026-05-28
+├── fibra-optica-empresas-ecuador.html     ← ✅ SEO producción 2026-05-28
 │
-├── soluciones.html
-├── soluciones/
-│   ├── connection.html
-│   ├── cloud.html
-│   ├── collaboration.html
-│   └── security.html
-│
-├── cobertura.html
-├── contactanos.html
-├── quienes-somos.html
-├── asesoramiento.html
-├── asesoramiento/
-│   ├── informacion-tecnica.html
-│   ├── preguntas-frecuentes.html
-│   ├── seguridad.html
-│   └── tips-de-seguridad.html
-│
-├── normas-y-regulaciones.html
-├── normatividad-y-regulaciones/
-│   ├── derechos-de-los-abonados.html
-│   └── reglamentos-del-consumidor.html
-│
-├── pqrs.html / preguntas-frecuentes.html / velocimetro.html
+├── soluciones.html / soluciones/          ← cloud, connection, collaboration, security
+├── cobertura.html / contactanos.html
+├── quienes-somos.html / asesoramiento.html / asesoramiento/
+├── normas-y-regulaciones.html / normatividad-y-regulaciones/
+├── pqrs.html / preguntas-frecuentes.html
+├── velocimetro.html / seguridad.html
+├── tips-de-seguridad.html / informacion-tecnica.html
 ├── encuesta-de-satisfaccion.html / gracias.html (noindex)
 │
-├── css/                                   ← Estilos externos (Jarvis, FancyBox)
-├── js/                                    ← Scripts del sitio público
-├── fonts/
-├── images/
-│   ├── controls/                          ← Logos, íconos, nav, footer
-│   ├── custom/                            ← Imágenes por página
-│   └── system/                            ← Favicons, manifest, og/
-│
-├── php/                                   ← Formularios PHP (contacto, pqrs, encuesta)
-│   └── library/secretKey.php             ← reCAPTCHA key Ecuador
-├── logs/
-└── seo/                                   ← Auditorías SEO
-    └── auditoria-seo-2026-05-23.md
+├── css/ js/ fonts/ images/ php/ logs/ error/
+└── seo/auditoria-seo-2026-05-23.md
 ```
 
 ---
 
-## Páginas SEO creadas (2026-05-28)
+## Páginas SEO en producción
 
-Cuatro páginas de aterrizaje para keywords de conectividad B2B en Ecuador.
-El nav de TODAS las páginas del sitio fue actualizado para incluirlas.
+Estado actual del servidor `www.mediacommerce.ec`:
 
-| Página | Keywords principales | Schema |
-|---|---|---|
-| `internet-corporativo-ecuador.html` | internet corporativo Ecuador, SLA 99.9% | Service + WebPage + FAQPage |
-| `internet-dedicado-ecuador.html` | internet dedicado Ecuador, fibra óptica dedicada | Service + WebPage + FAQPage |
-| `canales-de-datos-ecuador.html` | canales de datos Ecuador, MPLS Ecuador | Service + WebPage + FAQPage |
-| `fibra-optica-empresas-ecuador.html` | fibra óptica empresas Ecuador, FTTB | Service + WebPage + FAQPage |
+| Página | URL producción | HTTP | Fecha deploy |
+|---|---|---|---|
+| Internet Corporativo | `/internet-corporativo-ecuador.html` | 200 ✅ | 2026-05-28 |
+| Internet Dedicado | `/internet-dedicado-ecuador.html` | 200 ✅ | 2026-05-28 |
+| Canales de Datos | `/canales-de-datos-ecuador.html` | 200 ✅ | 2026-05-28 |
+| Fibra Óptica Empresas | `/fibra-optica-empresas-ecuador.html` | 200 ✅ | 2026-05-28 |
 
-### Nav section 3 — estado actual (todas las páginas)
+**Total páginas en servidor:** 31 HTML (27 originales + 4 SEO nuevas)
 
+### Nav global — estado actual (todas las páginas)
+
+Sección 3 del menú en páginas raíz:
 ```html
-<li><a href="internet-corporativo-ecuador.html">Internet Corporativo</a></li>
-<li><a href="internet-dedicado-ecuador.html">Internet Dedicado</a></li>
-<li><a href="canales-de-datos-ecuador.html">Canales de Datos</a></li>
-<li><a href="fibra-optica-empresas-ecuador.html">Fibra Óptica Empresas</a></li>
-<li><a href="cobertura.html">Cobertura</a></li>
-<li><a href="velocimetro.html">Velocímetro</a></li>
-<li><a href="normas-y-regulaciones.html">Normas y regulaciones</a></li>
-<li><a href="asesoramiento.html">Asesoramiento</a></li>
+<li><a href="internet-corporativo-ecuador.html" class="mainNav-btn">Internet Corporativo</a></li>
+<li><a href="internet-dedicado-ecuador.html" class="mainNav-btn">Internet Dedicado</a></li>
+<li><a href="canales-de-datos-ecuador.html" class="mainNav-btn">Canales de Datos</a></li>
+<li><a href="fibra-optica-empresas-ecuador.html" class="mainNav-btn">Fibra Óptica Empresas</a></li>
+<li><a href="cobertura.html" class="mainNav-btn">Cobertura</a></li>
+<li><a href="velocimetro.html" class="mainNav-btn">Velocímetro</a></li>
+<li><a href="normas-y-regulaciones.html" class="mainNav-btn">Normas y regulaciones</a></li>
+<li><a href="asesoramiento.html" class="mainNav-btn">Asesoramiento</a></li>
 ```
-
-Subdirectorios usan `../` en los hrefs. El script Python de actualización masiva está documentado en el historial de commits.
+En subdirectorios (`asesoramiento/`, `soluciones/`, `normatividad-y-regulaciones/`) los hrefs llevan `../`.
 
 ---
 
@@ -250,66 +260,38 @@ Subdirectorios usan `../` en los hrefs. El script Python de actualización masiv
 |---|---|---|
 | Dominio | `mediacommerce.ec` | `mcperu.pe` |
 | MCP ID | `mcecuador-web` | `mcperu-web` |
-| IP servidor | `51.79.104.194` | `179.43.82.54` |
+| SSH host | `hc-02.webserver.ec` | `179.43.82.54` |
+| SSH user | `mediaco2` | `mcp-agent` / `root` |
+| Llave SSH | `~/.ssh/mc2026/mcecuador-mediaco2-rsa` | `~/.ssh/mc2026/mcp-agent-mcperu` |
+| Web root | `/home/mediaco2/public_html/` | `/var/www/html/` |
 | Email | `servicioalcliente@mediacommerce.ec` | `ventas@mcperu.pe` |
-| Regulador | ARCOTEL | OSIPTEL |
-| Moneda | USD | PEN |
-| Ciudad referencia | Quito | Lima |
 | WhatsApp | `593987592186` | `51971244843` |
-| Facebook | `MediaCommerceOficial` | link distinto |
-| LinkedIn | `media-commerce-partners-s.a/` | `media-commerceperu/` |
+| Regulador | **ARCOTEL** | OSIPTEL |
+| Moneda | **USD** | PEN |
+| Ciudad | **Quito** | Lima |
+| Facebook | `MediaCommerceOficial` | distinto |
 | Instagram | **No existe** | Sí |
-| Módulo Ordenes | **No existe** | Sí (`ordenes/`) |
-| Blog | **No existe** | Sí (`blog/`) |
-| Base de datos | **No configurada** | MariaDB `bdmcperu` |
-| Panel cPanel | `https://51.79.104.194:2083/` | N/A (VPS) |
-
----
-
-## Flujo de trabajo
-
-1. **Edición local:** modificar archivos en `Ecuador/` con las herramientas de Claude Code.
-2. **Deploy:** usar MCP `mcecuador-web` skill `remote_deploy_files`.
-3. **Verificación:** `remote_list` para confirmar que los archivos llegaron al servidor.
-4. **Git:** hacer commit después del deploy exitoso.
-
-### Ejemplo de deploy con MCP
-
-```json
-{
-  "name": "remote_deploy_files",
-  "arguments": {
-    "files_json": "[
-      {\"local\": \"/Users/eidergonzaleztamara/Documents/web side/MC_2026/Ecuador/internet-corporativo-ecuador.html\",
-       \"remote\": \"/home/<usuario>/public_html/internet-corporativo-ecuador.html\"},
-      {\"local\": \"/Users/eidergonzaleztamara/Documents/web side/MC_2026/Ecuador/index.html\",
-       \"remote\": \"/home/<usuario>/public_html/index.html\"}
-    ]"
-  }
-}
-```
-
-> Reemplazar `<usuario>` con el usuario cPanel real del servidor (verificar con `ssh_health` o `remote_list /home`).
+| Módulo Ordenes | **No existe** | Sí |
+| Blog | **No existe** | Sí |
+| BD MariaDB | **No configurada** | `bdmcperu` |
 
 ---
 
 ## Tareas pendientes
 
-- [ ] **Completar `.env` del MCP** con usuario y contraseña SSH de `51.79.104.194` para activar el deploy automatizado
-- [ ] **Verificar web root** con `remote_list /home` para confirmar el usuario cPanel
-- [ ] **Hacer primer deploy** de las 4 páginas SEO + nav actualizado al servidor
-- [ ] **Añadir las 4 páginas al `sitemap.xml`** de Ecuador
-- [ ] **Crear imagen OG** `images/system/og/og-connection.jpg` (1200×630px)
-- [ ] **Auditoría SEO** de las 4 páginas nuevas (Lighthouse, Core Web Vitals)
+- [ ] Actualizar `sitemap.xml` con las 4 páginas SEO nuevas y hacer deploy
+- [ ] Crear imagen OG `images/system/og/og-connection.jpg` (1200×630px) y hacer deploy
+- [ ] Auditoría SEO de las 4 páginas nuevas (Lighthouse, Core Web Vitals)
+- [ ] Agregar host key del servidor en `MCP_WEB_SSH_KNOWN_HOST_KEY` del `.env` para verificación estricta
 
 ---
 
-## Notas técnicas
+## Notas técnicas importantes
 
-- El CSS/JS de cada página SEO está `<style>` inline en el `<head>` — mismo patrón que Perú.
-- El accordion FAQ usa JavaScript vanilla, sin jQuery.
-- El botón flotante de WhatsApp apunta siempre a `593987592186` — **nunca al número de Perú**.
-- El footer siempre usa ARCOTEL — **nunca OSIPTEL ni INDECOPI**.
-- El `.venv/` del MCP está en `.gitignore` — cada desarrollador lo instala localmente.
+- **WhatsApp flotante**: siempre `593987592186` — nunca usar el número de Perú.
+- **Footer**: siempre ARCOTEL — nunca OSIPTEL ni INDECOPI.
+- **Estilos CSS**: inline en `<style>` dentro de cada página SEO — mismo patrón que Perú.
+- **`.venv/`**: no está en git — instalar localmente con `python3 -m venv .venv && .venv/bin/pip install -r requirements.txt`.
+- **IPv4**: el servidor también responde en IPv6, pero el MCP conecta correctamente vía hostname.
 
-*Última actualización: 2026-05-28 — MCP obligatorio documentado, 4 páginas SEO desplegadas localmente*
+*Última actualización: 2026-05-28 — Deploy exitoso, 4 páginas SEO en producción, MCP operativo*

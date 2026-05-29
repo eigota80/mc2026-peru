@@ -1,21 +1,22 @@
 # MCP Web Connector — Media Commerce Ecuador
 
-> **Todo agente IA que necesite leer, modificar o desplegar archivos en `www.mediacommerce.ec` DEBE hacerlo exclusivamente a través de este MCP. No se permite acceso directo vía SSH, FTP, cPanel File Manager ni ningún otro método.**
+> **Todo agente IA que necesite leer, modificar o desplegar archivos en `www.mediacommerce.ec` DEBE hacerlo exclusivamente a través de este MCP. No se permite acceso directo vía SSH, FTP, cPanel ni ningún otro método.**
 
 ---
 
-## Datos del servidor
+## Conexión rápida (datos confirmados en producción)
 
 | Parámetro | Valor |
 |---|---|
-| **IP** | `51.79.104.194` |
+| **Hostname** | `hc-02.webserver.ec` |
+| **IP** | `51.79.106.41` |
 | **Puerto SSH** | `22` |
-| **Tipo de hosting** | cPanel (Apache) |
-| **Panel cPanel** | `https://51.79.104.194:2083/` |
-| **Dominio** | `https://www.mediacommerce.ec` |
-| **Web root** | `/home/<usuario_cpanel>/public_html/` |
-
-> El usuario cPanel exacto se descubre ejecutando `remote_list /home` una vez conectado.
+| **Usuario** | `mediaco2` |
+| **Llave privada** | `~/.ssh/mc2026/mcecuador-mediaco2-rsa` |
+| **Web root** | `/home/mediaco2/public_html/` |
+| **Tipo hosting** | cPanel (Apache) |
+| **cPanel** | `https://hc-02.webserver.ec:2083/` |
+| **Conexión** | ✅ Verificada 2026-05-28 |
 
 ---
 
@@ -24,79 +25,68 @@
 ```bash
 cd "Ecuador/mcp_web_connector"
 
-# 1. Crear entorno virtual Python
+# 1. Crear entorno virtual
 python3 -m venv .venv
 
 # 2. Instalar dependencias
 .venv/bin/pip install -r requirements.txt
 
-# 3. Configurar credenciales
-cp .env.example .env
-# Editar .env con las credenciales SSH reales (ver sección Credenciales)
+# 3. El .env ya está configurado con las credenciales reales
+# Si necesitas regenerarlo: cp .env.example .env
 
 # 4. Registrar en Claude Code
-# Settings → MCP Servers → copiar bloque de mcp-config.example.json
-# — O bien agregar en ~/.claude/settings.json la sección mcpServers
+# Settings → MCP Servers → agregar el bloque de mcp-config.example.json
 ```
 
----
+### Registrar en Claude Code (`~/.claude/settings.json`)
 
-## Credenciales — cómo completar el .env
-
-Edita `Ecuador/mcp_web_connector/.env`:
-
-```env
-MCP_WEB_SSH_HOST=51.79.104.194
-MCP_WEB_SSH_PORT=22
-
-# Opción A: usuario root con contraseña
-MCP_WEB_SSH_USER=root
-MCP_WEB_SSH_PASSWORD=tu_contraseña_aqui
-
-# Opción B: usuario cPanel con contraseña
-MCP_WEB_SSH_USER=nombre_usuario_cpanel
-MCP_WEB_SSH_PASSWORD=tu_contraseña_cpanel
-
-# Opción C: llave privada (descomentar)
-# MCP_WEB_SSH_USER=root
-# MCP_WEB_SSH_KEY_FILE=/ruta/absoluta/a/llave_privada
-
-# Host key para verificación estricta (obtener con get_server_host_key)
-# MCP_WEB_SSH_KNOWN_HOST_KEY=ssh-ed25519 AAAA...
-
-# Rutas permitidas en el servidor
-MCP_WEB_ALLOWED_ROOTS=/home,/var/www,/usr/local/apache/htdocs
+```json
+{
+  "mcpServers": {
+    "mcecuador-web": {
+      "command": "/Users/eidergonzaleztamara/Documents/web side/MC_2026/Ecuador/mcp_web_connector/.venv/bin/python",
+      "args": [
+        "/Users/eidergonzaleztamara/Documents/web side/MC_2026/Ecuador/mcp_web_connector/server.py"
+      ],
+      "env": {
+        "MCP_WEB_SSH_HOST": "hc-02.webserver.ec",
+        "MCP_WEB_SSH_PORT": "22",
+        "MCP_WEB_SSH_USER": "mediaco2",
+        "MCP_WEB_SSH_KEY_FILE": "/Users/eidergonzaleztamara/.ssh/mc2026/mcecuador-mediaco2-rsa",
+        "MCP_WEB_ALLOWED_ROOTS": "/home/mediaco2/public_html,/home/mediaco2,/home"
+      }
+    }
+  }
+}
 ```
-
-> El servidor Ecuador ya aparece en `~/.ssh/known_hosts` como `mediacommerce.ec` — confirma que SSH fue usado antes.
 
 ---
 
 ## Skills disponibles
 
-### Diagnóstico
+### Diagnóstico — ejecutar primero
 
-| Skill | Cuándo usarla |
-|---|---|
-| `config_summary` | **Siempre primero** — verifica que el .env cargó. Si falla, no continuar. |
-| `ssh_health` | Antes de cualquier deploy — confirma que el servidor está activo. Retorna hostname, PHP, disco. |
-| `get_server_host_key` | Una sola vez — para obtener el fingerprint y ponerlo en `MCP_WEB_SSH_KNOWN_HOST_KEY`. |
+| Skill | Descripción | Cuándo usar |
+|---|---|---|
+| `config_summary` | Verifica que el .env cargó | **Siempre primero** — si falla, no continuar |
+| `ssh_health` | Prueba SSH, retorna hostname/PHP/disco | Antes de cualquier deploy |
+| `get_server_host_key` | Obtiene fingerprint del servidor | Una vez, para completar `MCP_WEB_SSH_KNOWN_HOST_KEY` |
 
 ### Lectura remota
 
-| Skill | Parámetros clave | Uso típico |
+| Skill | Parámetros | Uso típico |
 |---|---|---|
-| `remote_list` | `path`, `max_entries` | Explorar web root, verificar que archivos llegaron |
-| `remote_read_text` | `path`, `max_bytes` | Leer un archivo de producción para comparar con local |
+| `remote_list` | `path`, `max_entries` | Ver contenido del servidor, verificar deploy |
+| `remote_read_text` | `path`, `max_bytes` | Comparar archivo local vs. producción |
 
-### Escritura y deploy ✅
+### Escritura y deploy
 
-| Skill | Parámetros clave | Uso típico |
+| Skill | Parámetros | Uso típico |
 |---|---|---|
-| `remote_write_text` | `path`, `content` | Escribir/reemplazar un archivo HTML, CSS o JS (backup automático en `/tmp/mcp_backup/`) |
-| `remote_write_binary` | `path`, `local_path` | Subir imagen o fuente desde el equipo local |
-| `remote_deploy_files` | `files_json`, `base_local`, `base_remote` | **Deploy masivo** — varios archivos en una sola llamada |
-| `remote_exec` | `command` | Comandos seguros post-deploy (ls, cp, chmod, service apache2 reload…) |
+| `remote_write_text` | `path`, `content` | Subir/reemplazar un archivo HTML, CSS o JS |
+| `remote_write_binary` | `path`, `local_path` | Subir imágenes, fuentes, binarios |
+| `remote_deploy_files` | `files_json` | **Deploy masivo — varios archivos a la vez** |
+| `remote_exec` | `command` | Comandos post-deploy (ls, cp, chmod, service reload) |
 
 ---
 
@@ -107,122 +97,100 @@ MCP_WEB_ALLOWED_ROOTS=/home,/var/www,/usr/local/apache/htdocs
 ```json
 { "name": "config_summary" }
 ```
-Debe retornar `ssh_host: "51.79.104.194"`. Si falla: revisar `.env`.
+Resultado esperado: `ssh_host: "hc-02.webserver.ec"`, `has_ssh_key_file: true`
 
 ### Paso 2 — Confirmar servidor activo
 
 ```json
 { "name": "ssh_health" }
 ```
-Retorna hostname, whoami, disco disponible. Si falla: el servidor está caído.
+Resultado esperado: `user: "mediaco2"`, `host: "hc-02.webserver.ec"`
 
-### Paso 3 — Descubrir web root
-
-```json
-{ "name": "remote_list", "arguments": { "path": "/home", "max_entries": 20 } }
-```
-Muestra los usuarios cPanel. El web root es `/home/<usuario>/public_html/`.
-
-### Paso 4 — Ver estado actual del servidor
+### Paso 3 — Ver estado actual del servidor
 
 ```json
 {
   "name": "remote_list",
   "arguments": {
-    "path": "/home/<usuario>/public_html",
+    "path": "/home/mediaco2/public_html",
     "max_entries": 100
   }
 }
 ```
 
-### Paso 5 — Subir archivos
+### Paso 4 — Subir archivos
 
+**Un solo archivo:**
+```json
+{
+  "name": "remote_write_text",
+  "arguments": {
+    "path": "/home/mediaco2/public_html/index.html",
+    "content": "<!-- contenido completo del archivo -->"
+  }
+}
+```
+
+**Múltiples archivos (recomendado para deploy):**
 ```json
 {
   "name": "remote_deploy_files",
   "arguments": {
     "files_json": "[
       {\"local\": \"/Users/eidergonzaleztamara/Documents/web side/MC_2026/Ecuador/internet-corporativo-ecuador.html\",
-       \"remote\": \"/home/<usuario>/public_html/internet-corporativo-ecuador.html\"},
+       \"remote\": \"/home/mediaco2/public_html/internet-corporativo-ecuador.html\"},
       {\"local\": \"/Users/eidergonzaleztamara/Documents/web side/MC_2026/Ecuador/index.html\",
-       \"remote\": \"/home/<usuario>/public_html/index.html\"}
+       \"remote\": \"/home/mediaco2/public_html/index.html\"}
     ]"
   }
 }
 ```
 
-Cada archivo tiene backup automático en `/tmp/mcp_backup/` antes de sobreescribirse.
+> Cada archivo tiene **backup automático** en `/tmp/mcp_backup/` antes de sobreescribirse.
 
-### Paso 6 — Verificar deploy
+### Paso 5 — Verificar deploy
 
 ```json
 {
   "name": "remote_list",
-  "arguments": { "path": "/home/<usuario>/public_html", "max_entries": 50 }
+  "arguments": {
+    "path": "/home/mediaco2/public_html",
+    "max_entries": 100
+  }
 }
 ```
 
 ---
 
-## Archivos pendientes de deploy (2026-05-28)
+## Rutas de referencia en el servidor
 
-Estos archivos fueron creados/modificados localmente y aún no están en el servidor:
+| Elemento | Ruta en servidor |
+|---|---|
+| Web root | `/home/mediaco2/public_html/` |
+| Páginas raíz | `/home/mediaco2/public_html/*.html` |
+| Soluciones | `/home/mediaco2/public_html/soluciones/` |
+| Asesoramiento | `/home/mediaco2/public_html/asesoramiento/` |
+| Normatividad | `/home/mediaco2/public_html/normatividad-y-regulaciones/` |
+| Backups MCP | `/tmp/mcp_backup/` |
 
-### Páginas SEO nuevas (crear en servidor)
-```
-Ecuador/internet-corporativo-ecuador.html  → public_html/internet-corporativo-ecuador.html
-Ecuador/internet-dedicado-ecuador.html     → public_html/internet-dedicado-ecuador.html
-Ecuador/canales-de-datos-ecuador.html      → public_html/canales-de-datos-ecuador.html
-Ecuador/fibra-optica-empresas-ecuador.html → public_html/fibra-optica-empresas-ecuador.html
-```
+## Rutas de referencia en el equipo local
 
-### Páginas con nav actualizado (reemplazar en servidor)
-```
-Ecuador/index.html               → public_html/index.html
-Ecuador/asesoramiento.html       → public_html/asesoramiento.html
-Ecuador/cobertura.html           → public_html/cobertura.html
-Ecuador/contactanos.html         → public_html/contactanos.html
-Ecuador/encuesta-de-satisfaccion.html → public_html/encuesta-de-satisfaccion.html
-Ecuador/gracias.html             → public_html/gracias.html
-Ecuador/informacion-tecnica.html → public_html/informacion-tecnica.html
-Ecuador/normas-y-regulaciones.html → public_html/normas-y-regulaciones.html
-Ecuador/pqrs.html                → public_html/pqrs.html
-Ecuador/preguntas-frecuentes.html → public_html/preguntas-frecuentes.html
-Ecuador/quienes-somos.html       → public_html/quienes-somos.html
-Ecuador/seguridad.html           → public_html/seguridad.html
-Ecuador/soluciones.html          → public_html/soluciones.html
-Ecuador/sumate-al-equipo.html    → public_html/sumate-al-equipo.html
-Ecuador/tips-de-seguridad.html   → public_html/tips-de-seguridad.html
-Ecuador/velocimetro.html         → public_html/velocimetro.html
-Ecuador/asesoramiento/informacion-tecnica.html   → public_html/asesoramiento/informacion-tecnica.html
-Ecuador/asesoramiento/preguntas-frecuentes.html  → public_html/asesoramiento/preguntas-frecuentes.html
-Ecuador/asesoramiento/seguridad.html             → public_html/asesoramiento/seguridad.html
-Ecuador/asesoramiento/tips-de-seguridad.html     → public_html/asesoramiento/tips-de-seguridad.html
-Ecuador/soluciones/cloud.html        → public_html/soluciones/cloud.html
-Ecuador/soluciones/collaboration.html → public_html/soluciones/collaboration.html
-Ecuador/soluciones/connection.html   → public_html/soluciones/connection.html
-Ecuador/soluciones/security.html     → public_html/soluciones/security.html
-Ecuador/normatividad-y-regulaciones/derechos-de-los-abonados.html → public_html/normatividad-y-regulaciones/derechos-de-los-abonados.html
-Ecuador/normatividad-y-regulaciones/reglamentos-del-consumidor.html → public_html/normatividad-y-regulaciones/reglamentos-del-consumidor.html
-```
+| Elemento | Ruta local |
+|---|---|
+| Proyecto Ecuador | `/Users/eidergonzaleztamara/Documents/web side/MC_2026/Ecuador/` |
+| Llave SSH privada | `/Users/eidergonzaleztamara/.ssh/mc2026/mcecuador-mediaco2-rsa` |
+| Llave SSH pública | `/Users/eidergonzaleztamara/.ssh/mc2026/mcecuador-mediaco2-rsa.pub` |
+| MCP connector | `/Users/eidergonzaleztamara/Documents/web side/MC_2026/Ecuador/mcp_web_connector/` |
 
 ---
 
 ## Comandos post-deploy útiles
 
-### Recargar Apache (si se modifican configs)
-```json
-{
-  "name": "remote_exec",
-  "arguments": { "command": "service apache2 reload" }
-}
-```
-
 ### Verificar permisos de un archivo
 ```json
 {
   "name": "remote_exec",
-  "arguments": { "command": "ls -la /home/<usuario>/public_html/internet-corporativo-ecuador.html" }
+  "arguments": { "command": "ls -la /home/mediaco2/public_html/internet-corporativo-ecuador.html" }
 }
 ```
 
@@ -230,9 +198,34 @@ Ecuador/normatividad-y-regulaciones/reglamentos-del-consumidor.html → public_h
 ```json
 {
   "name": "remote_exec",
-  "arguments": { "command": "chmod 644 /home/<usuario>/public_html/internet-corporativo-ecuador.html" }
+  "arguments": { "command": "chmod 644 /home/mediaco2/public_html/internet-corporativo-ecuador.html" }
 }
 ```
+
+### Ver espacio en disco
+```json
+{
+  "name": "remote_exec",
+  "arguments": { "command": "df -h /" }
+}
+```
+
+---
+
+## Estado del deploy en producción (2026-05-28)
+
+| Archivo | Servidor | HTTP |
+|---|---|---|
+| `index.html` + 23 páginas raíz | ✅ | 200 |
+| `asesoramiento/*.html` (4) | ✅ | 200 |
+| `soluciones/*.html` (4) | ✅ | 200 |
+| `normatividad-y-regulaciones/*.html` (2) | ✅ | 200 |
+| `internet-corporativo-ecuador.html` | ✅ | 200 |
+| `internet-dedicado-ecuador.html` | ✅ | 200 |
+| `canales-de-datos-ecuador.html` | ✅ | 200 |
+| `fibra-optica-empresas-ecuador.html` | ✅ | 200 |
+
+**Total: 31 páginas HTML en producción.**
 
 ---
 
@@ -240,20 +233,21 @@ Ecuador/normatividad-y-regulaciones/reglamentos-del-consumidor.html → public_h
 
 | | Perú (`mcperu-web`) | Ecuador (`mcecuador-web`) |
 |---|---|---|
-| Host | `179.43.82.54` | `51.79.104.194` |
-| Tipo servidor | VPS / Apache | cPanel / Apache |
-| Web root | `/var/www/html/` | `/home/<usuario>/public_html/` |
-| Base de datos | MariaDB `bdmcperu` | No configurada |
-| Skills DB | Sí (mysql_*) | Desactivadas por defecto |
-| Versión | `0.3.0` | `0.1.0` |
+| Host | `179.43.82.54` | `hc-02.webserver.ec` |
+| Usuario | `mcp-agent` / `root` | `mediaco2` |
+| Llave | `mcp-agent-mcperu` | `mcecuador-mediaco2-rsa` |
+| Web root | `/var/www/html/` | `/home/mediaco2/public_html/` |
+| Tipo | VPS / Apache | cPanel / Apache |
+| BD | MariaDB `bdmcperu` | No configurada |
 
 ---
 
 ## Seguridad
 
-- Nunca leer ni modificar `.env`, backups, credenciales ni archivos fuera de las raíces permitidas.
-- El MCP hace backup automático de cada archivo antes de sobreescribirlo (`/tmp/mcp_backup/`).
-- Comandos remotos: solo los de la whitelist (`ls`, `find`, `cp`, `chmod`, `service apache2 reload`…).
-- Variables sensibles **nunca en git**: `.env` está en `.gitignore`.
+- La llave privada `mcecuador-mediaco2-rsa` está en `~/.ssh/mc2026/` con permisos `600`.
+- La llave pública fue autorizada en cPanel SSH Access para el usuario `mediaco2`.
+- El `.env` tiene credenciales reales — nunca subirlo a git (está en `.gitignore`).
+- El MCP hace backup automático antes de sobreescribir cualquier archivo.
+- Comandos `remote_exec`: solo whitelist permitida (ls, find, cp, chmod, service reload…).
 
-*Última actualización: 2026-05-28 — v0.1.0*
+*Última actualización: 2026-05-28 — v0.1.0 — Conexión verificada, 31 páginas en producción*
