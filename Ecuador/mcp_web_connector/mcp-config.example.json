@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "mcecuador-web": {
+      "command": "/Users/eidergonzaleztamara/Documents/web side/MC_2026/Ecuador/mcp_web_connector/.venv/bin/python",
+      "args": [
+        "/Users/eidergonzaleztamara/Documents/web side/MC_2026/Ecuador/mcp_web_connector/server.py"
+      ],
+      "env": {
+        "MCP_WEB_SSH_HOST": "51.79.104.194",
+        "MCP_WEB_SSH_PORT": "22",
+        "MCP_WEB_SSH_USER": "root",
+        "MCP_WEB_ALLOWED_ROOTS": "/home,/var/www,/usr/local/apache/htdocs"
+      }
+    }
+  }
+}
