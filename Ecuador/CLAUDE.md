@@ -56,6 +56,7 @@ Ecuador/
 │
 ├── internet-corporativo-ecuador.html ← ✅ Creada 2026-05-28
 ├── internet-dedicado-ecuador.html    ← ✅ Creada 2026-05-28
+├── canales-de-datos-ecuador.html     ← ✅ Creada 2026-05-28
 ├── fibra-optica-empresas-ecuador.html← ✅ Creada 2026-05-28
 │
 ├── soluciones.html
@@ -137,7 +138,13 @@ Tres páginas de aterrizaje SEO para keywords de conectividad empresarial en Ecu
 - **Secciones:** Hero speed card, dedicado vs compartido (visual), specs técnicas 6 celdas, 8 casos de uso (POS/SRI adaptado a Ecuador), planes Dedicado Start/Pro/Max, ribbon IP fija, FAQ 6 preguntas, CTA, "También te puede interesar"
 - **Schema:** Service + WebPage + FAQPage
 
-### 3. `fibra-optica-empresas-ecuador.html`
+### 3. `canales-de-datos-ecuador.html`
+- **Keywords:** canales de datos Ecuador, MPLS Ecuador, circuito punto a punto Ecuador
+- **Secciones:** Hero topología de red animada, 3 tipos de canal (P2P / MPLS / Backup), specs 6 celdas, QoS visual con barras por clase de tráfico, 6 casos de uso (retail/SCADA/salud Ecuador), planes Canal P2P / MPLS / Backup, FAQ 6 preguntas, CTA, "También te puede interesar"
+- **Schema:** Service + WebPage + FAQPage
+- **Paleta:** violeta/pink (diferencia visualmente de las otras páginas)
+
+### 4. `fibra-optica-empresas-ecuador.html`
 - **Keywords:** fibra óptica empresas Ecuador, FTTB Ecuador
 - **Secciones:** Hero light beams, fibra vs cobre tabla, mosaic specs 6 celdas (red propia Ecuador), seguridad por sector (banca, salud, gobierno), proceso 4 pasos instalación, 6 casos de uso (financiero/Superintendencia de Bancos), planes Fibra Start/Pro/Max, FAQ DWDM, CTA
 - **Schema:** Service + WebPage + FAQPage
@@ -161,7 +168,7 @@ Las tres páginas SEO incluyen en el nav (sección 3) los enlaces mutuos:
 
 ## Tareas pendientes para futuros agentes
 
-- [ ] **Añadir las 3 páginas al `sitemap.xml`** de Ecuador con `<lastmod>2026-05-28</lastmod>`
+- [ ] **Añadir las 4 páginas al `sitemap.xml`** de Ecuador con `<lastmod>2026-05-28</lastmod>`
 - [ ] **Actualizar `index.html`** y `soluciones.html` para enlazar las nuevas páginas desde el nav principal
 - [ ] **Crear imágenes OG** en `images/system/og/`: `og-connection.jpg` (1200×630px) — referenciada en las 3 páginas
 - [ ] **Crear página `canales-de-datos-ecuador.html`** si se desea paridad con Perú
