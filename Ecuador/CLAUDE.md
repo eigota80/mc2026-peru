@@ -165,6 +165,20 @@ Agregar en `~/.claude/settings.json`:
 6. Commit git
 ```
 
+### Hero del home (`index.html`)
+
+El hero principal se administra desde `style.css`, no desde una etiqueta `<img>`:
+
+| Elemento | Ruta |
+|---|---|
+| HTML | `Ecuador/index.html` |
+| CSS | `Ecuador/style.css` |
+| Selector | `.home-hero` |
+| Imagen actual | `Ecuador/images/custom/index/home/hero_ecu.png` |
+| Ruta remota | `/home/mediaco2/public_html/images/custom/index/home/hero_ecu.png` |
+
+Para cambiarlo, copiar la nueva imagen en `images/custom/index/home/`, actualizar el `background-image` de `.home-hero`, cambiar el query string `?v=...` de la imagen y tambien el query string del `<link>` a `style.css` en `index.html`. En deploy subir siempre `index.html`, `style.css` y el archivo de imagen.
+
 ### Verificar conexión MCP
 
 ```json
@@ -356,6 +370,7 @@ Ecuador/
 
 ## Notas importantes para cualquier agente
 
+- **Guia operativa para agentes:** leer tambien `Ecuador/AGENTS.md` antes de modificar o desplegar.
 - **GA4 `G-5GEKHX28YV`** va al inicio de `<head>` en TODAS las páginas.
 - **WhatsApp flotante** apunta siempre a `593987592186` — nunca al de Perú.
 - **Footer**: siempre ARCOTEL — nunca OSIPTEL ni INDECOPI.
@@ -363,4 +378,4 @@ Ecuador/
 - **CSS**: estilos inline en `<style>` en páginas SEO — mismo patrón que Perú.
 - **`.venv/`**: no está en git — instalar localmente con `python3 -m venv .venv && .venv/bin/pip install -r requirements.txt`.
 
-*Última actualización: 2026-05-28 — GA4 implementado, auditoría SEO completada, 31 páginas en producción*
+*Última actualización: 2026-05-28 — Hero home actualizado, GA4 implementado, auditoría SEO completada, 31 páginas en producción*
