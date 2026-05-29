@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- ── Home ── -->
+  <url>
+    <loc>https://www.mediacommerce.ec/</loc>
+    <lastmod>2026-05-28T00:00:00-05:00</lastmod>
+    <priority>1.00</priority>
+  </url>
+
+  <!-- ── Páginas SEO de conectividad (prioridad alta) ── -->
+  <url>
+    <loc>https://www.mediacommerce.ec/internet-corporativo-ecuador.html</loc>
+    <lastmod>2026-05-28T00:00:00-05:00</lastmod>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://www.mediacommerce.ec/internet-dedicado-ecuador.html</loc>
+    <lastmod>2026-05-28T00:00:00-05:00</lastmod>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://www.mediacommerce.ec/canales-de-datos-ecuador.html</loc>
+    <lastmod>2026-05-28T00:00:00-05:00</lastmod>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://www.mediacommerce.ec/fibra-optica-empresas-ecuador.html</loc>
+    <lastmod>2026-05-28T00:00:00-05:00</lastmod>
+    <priority>0.90</priority>
+  </url>
+
+  <!-- ── Soluciones ── -->
+  <url>
+    <loc>https://www.mediacommerce.ec/soluciones.html</loc>
+    <lastmod>2026-05-28T00:00:00-05:00</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.mediacommerce.ec/soluciones/connection.html</loc>
+    <lastmod>2026-05-28T00:00:00-05:00</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.mediacommerce.ec/soluciones/cloud.html</loc>
+    <lastmod>2026-05-28T00:00:00-05:00</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.mediacommerce.ec/soluciones/collaboration.html</loc>
+    <lastmod>2026-05-28T00:00:00-05:00</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.mediacommerce.ec/soluciones/security.html</loc>
+    <lastmod>2026-05-28T00:00:00-05:00</lastmod>
+    <priority>0.80</priority>
+  </url>
+
+  <!-- ── Páginas institucionales ── -->
+  <url>
+    <loc>https://www.mediacommerce.ec/quienes-somos.html</loc>
+    <lastmod>2026-05-28T00:00:00-05:00</lastmod>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://www.mediacommerce.ec/contactanos.html</loc>
+    <lastmod>2026-05-28T00:00:00-05:00</lastmod>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://www.mediacommerce.ec/cobertura.html</loc>
+    <lastmod>2026-05-28T00:00:00-05:00</lastmod>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://www.mediacommerce.ec/sumate-al-equipo.html</loc>
+    <lastmod>2026-05-28T00:00:00-05:00</lastmod>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://www.mediacommerce.ec/pqrs.html</loc>
+    <lastmod>2026-05-28T00:00:00-05:00</lastmod>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://www.mediacommerce.ec/velocimetro.html</loc>
+    <lastmod>2026-05-28T00:00:00-05:00</lastmod>
+    <priority>0.70</priority>
+  </url>
+
+  <!-- ── Asesoramiento ── -->
+  <url>
+    <loc>https://www.mediacommerce.ec/asesoramiento.html</loc>
+    <lastmod>2026-05-28T00:00:00-05:00</lastmod>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://www.mediacommerce.ec/asesoramiento/preguntas-frecuentes.html</loc>
+    <lastmod>2026-05-28T00:00:00-05:00</lastmod>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://www.mediacommerce.ec/asesoramiento/informacion-tecnica.html</loc>
+    <lastmod>2026-05-28T00:00:00-05:00</lastmod>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://www.mediacommerce.ec/asesoramiento/seguridad.html</loc>
+    <lastmod>2026-05-28T00:00:00-05:00</lastmod>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://www.mediacommerce.ec/asesoramiento/tips-de-seguridad.html</loc>
+    <lastmod>2026-05-28T00:00:00-05:00</lastmod>
+    <priority>0.70</priority>
+  </url>
+
+  <!-- ── Normatividad ── -->
+  <url>
+    <loc>https://www.mediacommerce.ec/normas-y-regulaciones.html</loc>
+    <lastmod>2026-05-28T00:00:00-05:00</lastmod>
+    <priority>0.60</priority>
+  </url>
+  <url>
+    <loc>https://www.mediacommerce.ec/normatividad-y-regulaciones/derechos-de-los-abonados.html</loc>
+    <lastmod>2026-05-28T00:00:00-05:00</lastmod>
+    <priority>0.60</priority>
+  </url>
+  <url>
+    <loc>https://www.mediacommerce.ec/normatividad-y-regulaciones/reglamentos-del-consumidor.html</loc>
+    <lastmod>2026-05-28T00:00:00-05:00</lastmod>
+    <priority>0.60</priority>
+  </url>
+
+  <!-- excluidas: gracias.html y encuesta-de-satisfaccion.html (noindex) -->
+
+</urlset>
