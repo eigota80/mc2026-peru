@@ -1014,15 +1014,15 @@ footer {
 
 .home-hero {
 	position: relative;
-	background-image: url("images/custom/index/home/home-hero-tech-2026.jpg?v=20260521") !important;
-	background-position: center 28%;
+	background-image: url("images/custom/index/home/home-hero-mundial-2026.jpg?v=20260528") !important;
+	background-position: center center;
 	background-size: cover;
 	background-repeat: no-repeat;
 	isolation: isolate;
 }
 
 .webp .home-hero {
-	background-image: url("images/custom/index/home/home-hero-tech-2026.webp?v=20260521") !important;
+	background-image: url("images/custom/index/home/home-hero-mundial-2026.webp?v=20260528") !important;
 }
 
 .home-1:before {
