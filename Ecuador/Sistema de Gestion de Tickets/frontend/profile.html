@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mi perfil | Media Commerce</title>
+  <link rel="stylesheet" href="styles.css?v=20260504-profile-global">
+</head>
+<body class="profile-page">
+  <aside class="sidebar profile-sidebar">
+    <a class="brand" href="index.html" aria-label="Media Commerce Tickets">
+      <img class="brand-logo" src="assets/media-commerce-white.svg" alt="Media Commerce">
+      <small>Gestión de tickets</small>
+    </a>
+
+    <nav class="side-nav profile-nav" aria-label="Vistas">
+      <a class="side-link" href="index.html" aria-label="Dashboard">
+        <span class="side-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 5h7v6H4zM13 5h7v4h-7zM13 11h7v8h-7zM4 13h7v6H4z"/></svg>
+        </span>
+        <span class="side-label">Dashboard</span>
+      </a>
+      <a class="side-link" href="index.html" aria-label="Tickets">
+        <span class="side-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M6 3h12v18H6z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
+        </span>
+        <span class="side-label">Tickets</span>
+      </a>
+      <a class="side-link active" href="profile.html" aria-current="page" aria-label="Mi perfil">
+        <span class="side-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+        </span>
+        <span class="side-label">Mi perfil</span>
+      </a>
+    </nav>
+
+    <section class="api-card">
+      <span>Cuenta</span>
+      <strong>Mi perfil</strong>
+      <small id="profile-status">Verificando sesión...</small>
+    </section>
+  </aside>
+
+  <main class="app-shell profile-shell">
+    <div class="mc-visual app-visual" aria-hidden="true">
+      <span class="mc-glow"></span>
+      <span class="mc-grid"></span>
+    </div>
+
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Cuenta</p>
+        <h1>Mi perfil</h1>
+      </div>
+      <div class="topbar-actions">
+        <button class="ghost-button" id="backButton" type="button">Volver</button>
+        <button class="primary-button" form="profileForm" type="submit">Guardar cambios</button>
+      </div>
+    </header>
+
+    <section class="panel profile-panel">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">Preferencias</p>
+          <h2>Información personal</h2>
+        </div>
+      </div>
+
+      <div class="loading" id="loading">
+        <div class="spinner" aria-hidden="true"></div>
+        <p>Cargando perfil...</p>
+      </div>
+
+      <div class="profile-alerts" id="alertContainer"></div>
+
+      <form class="profile-form" id="profileForm">
+        <section class="form-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Identidad</p>
+              <h2>Datos del usuario</h2>
+            </div>
+          </div>
+
+          <div class="profile-photo-row">
+            <input type="hidden" id="photoUrl">
+            <div class="photo-preview empty" id="photoPreview">MC</div>
+            <div class="form-group">
+              <label for="photoFile">Foto de perfil</label>
+              <input type="file" id="photoFile" accept="image/png,image/jpeg,image/gif,image/webp,image/*">
+              <small>PNG, JPG, GIF o WebP.</small>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="company">Empresa</label>
+              <input type="text" id="company" placeholder="Tu empresa" maxlength="180">
+            </div>
+            <div class="form-group">
+              <label for="phone">Teléfono</label>
+              <input type="tel" id="phone" placeholder="+57 315 1234567" maxlength="20">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="jobTitle">Cargo / puesto</label>
+            <input type="text" id="jobTitle" placeholder="Tu puesto en la empresa" maxlength="120">
+          </div>
+        </section>
+
+        <section class="form-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Estructura</p>
+              <h2>Organización</h2>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="department">Departamento</label>
+            <input type="text" id="department" placeholder="Ej: Desarrollo, Soporte, Ventas" maxlength="120">
+          </div>
+        </section>
+
+        <section class="form-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Acceso</p>
+              <h2>Permisos</h2>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="permissionsInput">Permisos</label>
+            <div class="tag-input" id="permissionsTag">
+              <input type="text" id="permissionsInput" placeholder="Escribe y presiona Enter">
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Comunicación</p>
+              <h2>Canales</h2>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="channelsInput">Canales de comunicación</label>
+            <div class="tag-input" id="channelsTag">
+              <input type="text" id="channelsInput" placeholder="Ej: email, slack">
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Localización</p>
+              <h2>Idioma y zona horaria</h2>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="language">Idioma</label>
+              <select id="language">
+                <option value="es">Español</option>
+                <option value="en">English</option>
+                <option value="fr">Français</option>
+                <option value="pt">Português</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="timezone">Zona horaria</label>
+              <select id="timezone">
+                <option value="America/Bogota">America/Bogota (UTC-5)</option>
+                <option value="America/Mexico_City">America/Mexico_City (UTC-6)</option>
+                <option value="America/New_York">America/New_York (UTC-5/-4)</option>
+                <option value="America/Los_Angeles">America/Los_Angeles (UTC-8/-7)</option>
+                <option value="Europe/Madrid">Europe/Madrid (UTC+1/+2)</option>
+                <option value="America/Buenos_Aires">America/Buenos_Aires (UTC-3)</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Trabajo</p>
+              <h2>Preferencias</h2>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label class="checkbox-option" for="notificationsEnabled">
+              <input type="checkbox" id="notificationsEnabled">
+              <span>Notificaciones habilitadas</span>
+            </label>
+            <label class="checkbox-option" for="emailOnAssign">
+              <input type="checkbox" id="emailOnAssign">
+              <span>Email al asignar ticket</span>
+            </label>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="theme">Tema</label>
+              <select id="theme">
+                <option value="light">Claro</option>
+                <option value="dark">Oscuro</option>
+                <option value="auto">Automático</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="itemsPerPage">Elementos por página</label>
+              <input type="number" id="itemsPerPage" value="25" min="5" max="100">
+            </div>
+          </div>
+        </section>
+
+        <div class="button-group">
+          <button class="ghost-button" id="resetButton" type="button">Descartar</button>
+          <button class="primary-button" type="submit">Guardar cambios</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    function getApiBase() {
+      const localFrontendHosts = new Set([
+        "127.0.0.1:8001",
+        "localhost:8001",
+        "127.0.0.1:5500",
+        "localhost:5500",
+      ]);
+
+      if (window.location.protocol === "file:" || localFrontendHosts.has(window.location.host)) {
+        return "http://127.0.0.1:8002";
+      }
+
+      return window.location.origin;
+    }
+
+    const API_BASE = getApiBase();
+    const TOKEN_KEY = "accessToken";
+    let localPhotoPreviewUrl = null;
+
+    function getToken() {
+      return localStorage.getItem(TOKEN_KEY);
+    }
+
+    function setProfileStatus(message) {
+      document.getElementById("profile-status").textContent = message;
+    }
+
+    function showAlert(message, type = "success") {
+      const container = document.getElementById("alertContainer");
+      const alert = document.createElement("div");
+      alert.className = `alert ${type} show`;
+      alert.textContent = message;
+      container.innerHTML = "";
+      container.appendChild(alert);
+
+      setTimeout(() => alert.classList.remove("show"), 5000);
+    }
+
+    function showLoading(show = true) {
+      document.getElementById("loading").classList.toggle("show", show);
+    }
+
+    function resolvePhotoUrl(url) {
+      if (!url) return "";
+      if (/^(https?:|data:|blob:)/i.test(url)) return url;
+      return `${API_BASE}${url.startsWith("/") ? url : `/${url}`}`;
+    }
+
+    function setupTagInput(inputId, tagContainerId) {
+      const input = document.getElementById(inputId);
+      input.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter") return;
+        event.preventDefault();
+        const value = input.value.trim();
+        if (!value) return;
+        addTag(value, tagContainerId);
+        input.value = "";
+      });
+    }
+
+    function addTag(value, tagContainerId) {
+      const container = document.getElementById(tagContainerId);
+      const tag = document.createElement("span");
+      const label = document.createElement("span");
+      const button = document.createElement("button");
+
+      tag.className = "tag";
+      label.className = "tag-label";
+      label.textContent = value;
+      button.type = "button";
+      button.setAttribute("aria-label", `Quitar ${value}`);
+      button.textContent = "×";
+      button.addEventListener("click", () => tag.remove());
+
+      tag.append(label, button);
+      container.insertBefore(tag, container.querySelector("input"));
+    }
+
+    function getTags(tagContainerId) {
+      return Array.from(document.querySelectorAll(`#${tagContainerId} .tag-label`))
+        .map((tag) => tag.textContent.trim())
+        .filter(Boolean);
+    }
+
+    function setTags(tags, tagContainerId) {
+      const container = document.getElementById(tagContainerId);
+      const input = container.querySelector("input");
+      container.innerHTML = "";
+      container.appendChild(input);
+      tags.forEach((tag) => addTag(tag, tagContainerId));
+    }
+
+    function setPhotoPreview(source) {
+      const preview = document.getElementById("photoPreview");
+      preview.innerHTML = "";
+
+      if (source) {
+        const image = document.createElement("img");
+        image.src = source;
+        image.alt = "Foto de perfil";
+        image.onerror = () => {
+          preview.classList.add("empty");
+          preview.textContent = "MC";
+        };
+        preview.appendChild(image);
+        preview.classList.remove("empty");
+      } else {
+        preview.textContent = "MC";
+        preview.classList.add("empty");
+      }
+    }
+
+    document.getElementById("photoFile").addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      if (localPhotoPreviewUrl) {
+        URL.revokeObjectURL(localPhotoPreviewUrl);
+        localPhotoPreviewUrl = null;
+      }
+
+      if (file) {
+        localPhotoPreviewUrl = URL.createObjectURL(file);
+        setPhotoPreview(localPhotoPreviewUrl);
+      } else {
+        setPhotoPreview(resolvePhotoUrl(document.getElementById("photoUrl").value));
+      }
+    });
+
+    async function loadProfile() {
+      const token = getToken();
+      if (!token) {
+        setProfileStatus("Sin sesión");
+        showAlert("No hay sesión iniciada", "error");
+        return;
+      }
+
+      try {
+        showLoading(true);
+        setProfileStatus("Cargando...");
+        const response = await fetch(`${API_BASE}/profile`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          const error = await response.json().catch(() => ({}));
+          throw new Error(error.detail || `Error ${response.status}`);
+        }
+
+        const profile = await response.json();
+        populateForm(profile);
+        setProfileStatus("Perfil cargado");
+      } catch (error) {
+        console.error("Error cargando perfil:", error);
+        setProfileStatus("Error de carga");
+        showAlert(`Error al cargar el perfil: ${error.message}`, "error");
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    function populateForm(profile) {
+      document.getElementById("photoUrl").value = profile.photo_url || "";
+      document.getElementById("photoFile").value = "";
+      document.getElementById("company").value = profile.company || "";
+      document.getElementById("phone").value = profile.phone || "";
+      document.getElementById("jobTitle").value = profile.job_title || "";
+      document.getElementById("department").value = profile.department || "";
+      document.getElementById("language").value = profile.language || "es";
+      document.getElementById("timezone").value = profile.timezone || "America/Bogota";
+
+      setTags(profile.permissions || [], "permissionsTag");
+      setTags(profile.channels || [], "channelsTag");
+
+      const prefs = profile.work_preferences || {};
+      document.getElementById("notificationsEnabled").checked = prefs.notifications_enabled !== false;
+      document.getElementById("emailOnAssign").checked = prefs.email_on_ticket_assign !== false;
+      document.getElementById("theme").value = prefs.theme || "light";
+      document.getElementById("itemsPerPage").value = prefs.items_per_page || 25;
+
+      if (localPhotoPreviewUrl) {
+        URL.revokeObjectURL(localPhotoPreviewUrl);
+        localPhotoPreviewUrl = null;
+      }
+      setPhotoPreview(resolvePhotoUrl(profile.photo_url));
+    }
+
+    async function uploadProfilePhoto(token) {
+      const fileInput = document.getElementById("photoFile");
+      const file = fileInput.files[0];
+      if (!file) return null;
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch(`${API_BASE}/profile/photo`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.detail || `Error ${response.status}`);
+      }
+
+      const profile = await response.json();
+      document.getElementById("photoUrl").value = profile.photo_url || "";
+      fileInput.value = "";
+      return profile;
+    }
+
+    async function saveProfile(event) {
+      event.preventDefault();
+
+      const token = getToken();
+      if (!token) {
+        setProfileStatus("Sin sesión");
+        showAlert("No hay sesión iniciada", "error");
+        return;
+      }
+
+      try {
+        showLoading(true);
+        setProfileStatus("Guardando...");
+        await uploadProfilePhoto(token);
+
+        const profileData = {
+          photo_url: document.getElementById("photoUrl").value.trim() || null,
+          company: document.getElementById("company").value.trim() || null,
+          phone: document.getElementById("phone").value.trim() || null,
+          job_title: document.getElementById("jobTitle").value.trim() || null,
+          department: document.getElementById("department").value.trim() || null,
+          permissions: getTags("permissionsTag"),
+          channels: getTags("channelsTag"),
+          language: document.getElementById("language").value,
+          timezone: document.getElementById("timezone").value,
+          work_preferences: {
+            notifications_enabled: document.getElementById("notificationsEnabled").checked,
+            email_on_ticket_assign: document.getElementById("emailOnAssign").checked,
+            theme: document.getElementById("theme").value,
+            items_per_page: parseInt(document.getElementById("itemsPerPage").value, 10),
+          },
+        };
+
+        const response = await fetch(`${API_BASE}/profile`, {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(profileData),
+        });
+
+        if (!response.ok) {
+          const error = await response.json().catch(() => ({}));
+          throw new Error(error.detail || `Error ${response.status}`);
+        }
+
+        const updatedProfile = await response.json();
+        populateForm(updatedProfile);
+        setProfileStatus("Perfil actualizado");
+        showAlert("Perfil guardado exitosamente", "success");
+      } catch (error) {
+        console.error("Error guardando perfil:", error);
+        setProfileStatus("Error al guardar");
+        showAlert(`Error al guardar el perfil: ${error.message}`, "error");
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    document.getElementById("profileForm").addEventListener("submit", saveProfile);
+    document.getElementById("resetButton").addEventListener("click", loadProfile);
+    document.getElementById("backButton").addEventListener("click", () => {
+      window.location.href = "index.html";
+    });
+    setupTagInput("permissionsInput", "permissionsTag");
+    setupTagInput("channelsInput", "channelsTag");
+    window.addEventListener("load", loadProfile);
+  </script>
+</body>
+</html>
