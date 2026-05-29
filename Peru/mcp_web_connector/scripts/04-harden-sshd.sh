@@ -3,7 +3,7 @@
 # Script: 04-harden-sshd.sh
 # Ejecutar como: root en el servidor 179.43.82.54
 # Proposito: Restringir SSH para el usuario mcp-agent
-#            - Solo autenticacion por clave
+#            - Solo autenticacion por clave RSA
 #            - Reenvio TCP local permitido (necesario para tunel SSH → MySQL)
 #            - Sin X11, sin agent forwarding, sin tunnel TUN/TAP
 # ATENCION: Hacer backup de /etc/ssh/sshd_config antes de ejecutar
@@ -48,7 +48,7 @@ cat >> "$SSHD_CONFIG" << 'SSHBLOCK'
 
 # ─── Restricciones para mcp-agent (WebOps CI/CD) ─────────────────────────────
 Match User mcp-agent
-    # Solo autenticacion por clave SSH — nunca password
+    # Solo autenticacion por clave SSH RSA — nunca password
     PasswordAuthentication no
     PubkeyAuthentication yes
     AuthenticationMethods publickey

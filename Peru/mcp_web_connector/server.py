@@ -58,6 +58,10 @@ class Settings:
     ssh_user: str
     ssh_password: Optional[str]
     ssh_key_file: Optional[str]
+    ssh_key_passphrase: Optional[str]
+    ssh_allow_agent: bool
+    ssh_enable_password: bool
+    ssh_force_ssh_rsa: bool
     ssh_known_host_key: Optional[str]
     db_host: str
     db_port: int
@@ -70,7 +74,14 @@ class Settings:
     @classmethod
     def from_env(cls) -> "Settings":
         ssh_password = os.getenv("MCP_WEB_SSH_PASSWORD") or None
-        db_password = os.getenv("MCP_WEB_DB_PASSWORD") or ssh_password
+        ssh_key_file = (
+            os.getenv("MCP_WEB_SSH_KEY_FILE")
+            or os.getenv("MCP_WEB_SSH_KEY_PATH")
+            or None
+        )
+        if ssh_key_file:
+            ssh_key_file = os.path.expanduser(ssh_key_file)
+        db_password = os.getenv("MCP_WEB_DB_PASSWORD") or None
         allowed_roots = tuple(
             posixpath.normpath(item.strip())
             for item in os.getenv(
@@ -84,7 +95,11 @@ class Settings:
             ssh_port=int(os.getenv("MCP_WEB_SSH_PORT", "22")),
             ssh_user=os.getenv("MCP_WEB_SSH_USER", "mcp-agent"),
             ssh_password=ssh_password,
-            ssh_key_file=os.getenv("MCP_WEB_SSH_KEY_FILE") or None,
+            ssh_key_file=ssh_key_file,
+            ssh_key_passphrase=os.getenv("MCP_WEB_SSH_KEY_PASSPHRASE") or None,
+            ssh_allow_agent=(os.getenv("MCP_WEB_SSH_ALLOW_AGENT", "").strip().lower() in {"1", "true", "yes"}),
+            ssh_enable_password=(os.getenv("MCP_WEB_SSH_ENABLE_PASSWORD", "").strip().lower() in {"1", "true", "yes"}),
+            ssh_force_ssh_rsa=(os.getenv("MCP_WEB_SSH_FORCE_SSH_RSA", "").strip().lower() in {"1", "true", "yes"}),
             ssh_known_host_key=os.getenv("MCP_WEB_SSH_KNOWN_HOST_KEY") or None,
             db_host=os.getenv("MCP_WEB_DB_HOST", "127.0.0.1"),
             db_port=int(os.getenv("MCP_WEB_DB_PORT", "3306")),
@@ -121,6 +136,10 @@ def public_settings() -> Dict[str, Any]:
         "max_read_bytes": cfg.max_read_bytes,
         "has_ssh_password": bool(cfg.ssh_password),
         "has_ssh_key_file": bool(cfg.ssh_key_file),
+        "has_ssh_key_passphrase": bool(cfg.ssh_key_passphrase),
+        "ssh_allow_agent": cfg.ssh_allow_agent,
+        "ssh_enable_password": cfg.ssh_enable_password,
+        "ssh_force_ssh_rsa": cfg.ssh_force_ssh_rsa,
         "has_ssh_known_host_key": bool(cfg.ssh_known_host_key),
         "has_db_password": bool(cfg.db_password),
     }
@@ -140,10 +159,26 @@ def _build_host_key(key_string: str) -> Tuple[str, paramiko.PKey]:
     return key_type, paramiko.RSAKey(data=key_bytes)
 
 
+def load_private_key() -> Optional[paramiko.PKey]:
+    cfg = settings()
+    if not cfg.ssh_key_file:
+        return None
+    # El proyecto usa RSA para el acceso administrativo. Precargar la llave evita
+    # que Paramiko intente autodetectarla con un tipo incorrecto.
+    return paramiko.RSAKey.from_private_key_file(
+        cfg.ssh_key_file,
+        password=cfg.ssh_key_passphrase,
+    )
+
+
 def connect_ssh() -> paramiko.SSHClient:
     cfg = settings()
-    if not cfg.ssh_password and not cfg.ssh_key_file:
-        raise RuntimeError("Configura MCP_WEB_SSH_PASSWORD o MCP_WEB_SSH_KEY_FILE.")
+    if not cfg.ssh_key_file and not cfg.ssh_allow_agent and not (cfg.ssh_enable_password and cfg.ssh_password):
+        raise RuntimeError(
+            "Configura MCP_WEB_SSH_KEY_FILE (o MCP_WEB_SSH_KEY_PATH), MCP_WEB_SSH_ALLOW_AGENT=1, "
+            "o MCP_WEB_SSH_ENABLE_PASSWORD=1 para tareas bootstrap. "
+            "El acceso SSH por password esta deshabilitado para mcperu-web."
+        )
 
     client = paramiko.SSHClient()
 
@@ -157,14 +192,23 @@ def connect_ssh() -> paramiko.SSHClient:
         # Configura MCP_WEB_SSH_KNOWN_HOST_KEY para verificación estricta.
         client.set_missing_host_key_policy(paramiko.WarningPolicy())
 
+    pkey = load_private_key()
+    if cfg.ssh_force_ssh_rsa:
+        preferred = tuple(
+            item for item in getattr(paramiko.Transport, "_preferred_pubkeys", ())
+            if item != "ssh-rsa"
+        )
+        paramiko.Transport._preferred_pubkeys = ("ssh-rsa",) + preferred
     client.connect(
         hostname=cfg.ssh_host,
         port=cfg.ssh_port,
         username=cfg.ssh_user,
-        password=cfg.ssh_password,
-        key_filename=cfg.ssh_key_file,
+        password=cfg.ssh_password if cfg.ssh_enable_password else None,
+        pkey=pkey,
+        key_filename=None if pkey else cfg.ssh_key_file,
+        passphrase=cfg.ssh_key_passphrase,
         look_for_keys=False,
-        allow_agent=False,
+        allow_agent=cfg.ssh_allow_agent,
         timeout=15,
         banner_timeout=20,
         auth_timeout=20,
@@ -185,13 +229,13 @@ def ssh_client() -> Iterable[paramiko.SSHClient]:
 def db_connection(database: Optional[str] = None) -> Iterable[pymysql.connections.Connection]:
     cfg = settings()
     if not cfg.db_password:
-        raise RuntimeError("Configura MCP_WEB_DB_PASSWORD o MCP_WEB_SSH_PASSWORD.")
+        raise RuntimeError("Configura MCP_WEB_DB_PASSWORD para acceder a MariaDB.")
 
     tunnel = SSHTunnelForwarder(
         (cfg.ssh_host, cfg.ssh_port),
         ssh_username=cfg.ssh_user,
-        ssh_password=cfg.ssh_password,
-        ssh_pkey=cfg.ssh_key_file,
+        ssh_pkey=load_private_key() or cfg.ssh_key_file,
+        ssh_private_key_password=cfg.ssh_key_passphrase,
         remote_bind_address=(cfg.db_host, cfg.db_port),
     )
     tunnel.start()
@@ -755,6 +799,14 @@ def remote_exec(command: str, timeout: int = 30) -> Dict[str, Any]:
         r"^chown\s",
         r"^mkdir\s",
         r"^rm\s+(?!-rf|.*\*)[\w./\- ]+$",  # rm sin -rf ni wildcards
+        r"^id\s+mcp-agent$",
+        r"^getent\s+passwd\s+mcp-agent$",
+        r"^useradd\s+--home-dir\s+/home/mcp-agent\s+--shell\s+/bin/bash\s+mcp-agent$",
+        r"^passwd\s+-l\s+mcp-agent$",
+        r"^passwd\s+-S\s+mcp-agent$",
+        r"^passwd\s+-u\s+mcp-agent$",
+        r"^passwd\s+-u\s+-f\s+mcp-agent$",
+        r"^restorecon\s+-Rv\s+/home/mcp-agent(/\.ssh)?$",
         r"^service\s+apache2\s+(reload|restart|status)$",
         r"^systemctl\s+(reload|restart|status)\s+(apache2|httpd)$",
         r"^php\s+-l\s+",

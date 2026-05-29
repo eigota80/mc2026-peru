@@ -4,6 +4,26 @@ Servidor MCP local por `stdio` para conectarse al hosting web y a la base MariaD
 
 ---
 
+## Estado del servidor (2026-05-29)
+
+Bootstrap completado por MCP usando `root` para bootstrap inicial. Operacion normal desde `mcp-agent`:
+
+| Parametro | Valor |
+|---|---|
+| Host | `179.43.82.54` (hosting.perunix.net) |
+| Usuario operacional | `mcp-agent` |
+| Autenticacion | Solo SSH Key RSA 4096 |
+| Fingerprint | `SHA256:GCxkhUI4ysNw9LJEayIFdF2BJjWRRrdZp51mVi/syBw` |
+| Kernel | Linux 3.10.0-1160.25.1.el7.x86_64 (CentOS 7) |
+| PHP | 7.4.19 |
+| Estado MCP | **Operativo** — `ssh_health` OK como mcp-agent |
+
+Scripts completados: `01-setup-mcp-agent-user.sh`, `07-install-rsa-public-key.sh`, `04-harden-sshd.sh`.
+
+Pendiente: `03-setup-db-user.sh` (usuario MariaDB de solo lectura), `05-setup-staging.sh`.
+
+---
+
 ## Indice
 
 1. [Herramientas disponibles](#herramientas-disponibles)
@@ -54,7 +74,9 @@ cp .env.example .env
 chmod 600 .env
 ```
 
-Edita `.env` con las claves reales.
+Edita `.env` con la clave privada RSA local (`MCP_WEB_SSH_KEY_FILE`) y la clave de BD (`MCP_WEB_DB_PASSWORD`). No uses `MCP_WEB_SSH_PASSWORD` para este proyecto.
+
+Si la clave RSA esta cifrada, desbloqueala con `ssh-add ~/.ssh/id_rsa` y usa `MCP_WEB_SSH_ALLOW_AGENT=1`, o define `MCP_WEB_SSH_KEY_PASSPHRASE` solo en tu `.env` local.
 
 ---
 
@@ -72,7 +94,7 @@ Edita `.env` con las claves reales.
         "MCP_WEB_SSH_HOST": "179.43.82.54",
         "MCP_WEB_SSH_PORT": "22",
         "MCP_WEB_SSH_USER": "mcp-agent",
-        "MCP_WEB_SSH_KEY_PATH": "~/.ssh/mc2026/mcp-agent-mcperu",
+        "MCP_WEB_SSH_KEY_FILE": "~/.ssh/mc2026/mcp-agent-mcperu-rsa",
         "MCP_WEB_DB_NAME": "bdmcperu",
         "MCP_WEB_DB_USER": "mcp_agent_ro"
       }
@@ -104,7 +126,7 @@ El usuario `mcp-agent` es la identidad exclusiva del agente en el servidor `179.
 | Usuario del sistema | `mcp-agent` |
 | Acceso root | **Nunca** |
 | Permisos sudo | Solo `nginx restart` y scripts de deploy |
-| Autenticacion | Solo SSH Key (Ed25519) |
+| Autenticacion | Solo SSH Key RSA 4096 |
 | Login por password | **Deshabilitado** |
 | Acceso a BD | Solo `SELECT` en `bdmcperu` |
 | Historial de comandos | Guardado en `/var/log/mcp-agent/` |
@@ -172,11 +194,10 @@ Match User mcp-agent
     PasswordAuthentication no
     PubkeyAuthentication yes
     AuthenticationMethods publickey
-    AllowTcpForwarding no
+    AllowTcpForwarding local
     X11Forwarding no
     AllowAgentForwarding no
     PermitTunnel no
-    ChrootDirectory /home/mcp-agent
     ClientAliveInterval 300
     ClientAliveCountMax 6
     LogLevel VERBOSE
@@ -191,15 +212,18 @@ Todos los scripts estan en `mcp_web_connector/scripts/`. Ejecutar en orden como 
 ### Orden de ejecucion
 
 ```bash
+# En tu Mac (como usuario local):
+bash 02-generate-ssh-keys.sh       # Genera el par de claves SSH RSA 4096
+
 # En el servidor (como root):
 bash 01-setup-mcp-agent-user.sh    # Crea el usuario y permisos base
+PUBLIC_KEY_FILE=/tmp/id_rsa.pub bash 07-install-rsa-public-key.sh
 bash 03-setup-db-user.sh           # Crea el usuario MariaDB de solo lectura
 bash 04-harden-sshd.sh             # Restringe SSH para mcp-agent
 bash 05-setup-staging.sh           # Configura entorno de staging
-
-# En tu Mac (como usuario local):
-bash 02-generate-ssh-keys.sh       # Genera el par de claves SSH Ed25519
 ```
+
+Si quieres que `mcp-agent` acepte exclusivamente la clave RSA nueva, ejecuta el instalador con `REPLACE_AUTHORIZED_KEYS=1` despues de confirmar que tienes una sesion root abierta de respaldo.
 
 ### Comandos ejecutados (resumen)
 
@@ -220,8 +244,11 @@ mcp-agent ALL=(ALL) NOPASSWD: /usr/local/bin/deploy-mcperu.sh
 mcp-agent ALL=(ALL) NOPASSWD: /usr/local/bin/update-staging.sh
 EOF
 
-# 02 — SSH key (en Mac local)
-ssh-keygen -t ed25519 -C "mcp-agent@mcperu.pe" -f ~/.ssh/mc2026/mcp-agent-mcperu -N ""
+# 02 — SSH key RSA (en Mac local)
+ssh-keygen -t rsa -b 4096 -o -a 100 -C "mcp-agent-rsa@mcperu.pe" -f ~/.ssh/mc2026/mcp-agent-mcperu-rsa -N ""
+
+# 07 — Instalar clave publica RSA en authorized_keys (en servidor)
+PUBLIC_KEY_FILE=/tmp/id_rsa.pub bash 07-install-rsa-public-key.sh
 
 # 03 — Base de datos
 mysql -u root -e "CREATE USER 'mcp_agent_ro'@'localhost' IDENTIFIED BY '...';"
@@ -288,7 +315,7 @@ Sitio actualizado (https://mcperu.pe)
 
 | Secret | Descripcion |
 |---|---|
-| `MCP_AGENT_SSH_PRIVATE_KEY` | Clave privada Ed25519 del mcp-agent |
+| `MCP_AGENT_SSH_PRIVATE_KEY` | Clave privada RSA del mcp-agent |
 | `VERCEL_TOKEN` | Token de Vercel (si se usa Vercel en lugar de SSH) |
 | `VERCEL_ORG_ID` | ID de organizacion en Vercel |
 | `VERCEL_PROJECT_ID` | ID del proyecto en Vercel |
@@ -353,7 +380,7 @@ Cada rollback queda registrado en `/var/log/mcp-agent/rollback.log`:
 
 | Variable | Ubicacion en servidor | Uso |
 |---|---|---|
-| SSH private key | `~/.ssh/mc2026/mcp-agent-mcperu` (Mac local) | Conexion del agente |
+| SSH private key | `~/.ssh/mc2026/mcp-agent-mcperu-rsa` (Mac local) | Conexion del agente |
 | DB password (mcp_agent_ro) | `/etc/mcp-agent/db.env` | Lectura de BD |
 | DB password (root) | Variable de entorno en servidor | Administracion |
 | VERCEL_TOKEN | GitHub Secrets | Deploy a Vercel |

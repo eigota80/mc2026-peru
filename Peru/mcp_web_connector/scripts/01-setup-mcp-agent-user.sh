@@ -37,6 +37,8 @@ else
     echo "  ✓ Usuario $AGENT_USER creado"
 fi
 
+AGENT_GROUP="$(id -gn "$AGENT_USER")"
+
 # Bloquear autenticacion por password
 passwd -l "$AGENT_USER"
 echo "  ✓ Login por password bloqueado (solo SSH key permitida)"
@@ -55,7 +57,7 @@ mkdir -p "$SSH_DIR"
 chmod 700 "$SSH_DIR"
 touch "$SSH_DIR/authorized_keys"
 chmod 600 "$SSH_DIR/authorized_keys"
-chown -R "$AGENT_USER:$AGENT_USER" "$SSH_DIR"
+chown -R "$AGENT_USER:$AGENT_GROUP" "$SSH_DIR"
 echo "  ✓ $SSH_DIR configurado con permisos correctos"
 
 # ─── 3. CREAR ESTRUCTURA DE DIRECTORIOS ─────────────────────────────────────
@@ -66,7 +68,7 @@ mkdir -p "$WEB_ROOT"
 mkdir -p "$STAGING_ROOT"
 mkdir -p "$LOG_DIR"
 
-chown -R "$AGENT_USER:$AGENT_USER" "$AGENT_HOME/apps"
+chown -R "$AGENT_USER:$AGENT_GROUP" "$AGENT_HOME/apps"
 chmod 750 "$AGENT_HOME"
 chmod 755 "$WEB_ROOT"
 chmod 755 "$STAGING_ROOT"
@@ -109,7 +111,7 @@ PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 echo "[ mcp-agent ] Sesion iniciada: $(date '+%Y-%m-%d %H:%M:%S') desde $SSH_CLIENT"
 BASHRC
 
-chown "$AGENT_USER:$AGENT_USER" "$AGENT_HOME/.bashrc"
+chown "$AGENT_USER:$AGENT_GROUP" "$AGENT_HOME/.bashrc"
 echo "  ✓ Shell restringido con PATH controlado y logging activo"
 
 # ─── 5. PERMISOS SUDO MINIMOS (solo reiniciar servicio web) ─────────────────
@@ -247,7 +249,8 @@ echo " Sudo:         Solo nginx/apache restart + deploy-mcperu.sh"
 echo " Base datos:   Pendiente (ver script 03-setup-db-user.sh)"
 echo "============================================================"
 echo ""
-echo "PROXIMO PASO: Agregar la SSH public key del agente:"
-echo "  cat /ruta/a/mcp-agent-key.pub >> $SSH_DIR/authorized_keys"
-echo "  (Ver script 02-generate-ssh-keys.sh)"
+echo "PROXIMO PASO: Agregar la SSH public key RSA del agente:"
+echo "  PUBLIC_KEY_FILE=/tmp/id_rsa.pub bash 07-install-rsa-public-key.sh"
+echo "  Para dejar solo esa clave: REPLACE_AUTHORIZED_KEYS=1 PUBLIC_KEY_FILE=/tmp/id_rsa.pub bash 07-install-rsa-public-key.sh"
+echo "  (Ver scripts 02-generate-ssh-keys.sh y 07-install-rsa-public-key.sh)"
 echo ""

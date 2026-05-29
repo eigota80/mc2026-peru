@@ -8,11 +8,12 @@
       "env": {
         "MCP_WEB_SSH_HOST": "179.43.82.54",
         "MCP_WEB_SSH_PORT": "22",
-        "MCP_WEB_SSH_USER": "root",
+        "MCP_WEB_SSH_USER": "mcp-agent",
+        "MCP_WEB_SSH_KEY_FILE": "~/.ssh/mc2026/mcp-agent-mcperu-rsa",
         "MCP_WEB_DB_HOST": "127.0.0.1",
         "MCP_WEB_DB_PORT": "3306",
         "MCP_WEB_DB_NAME": "bdmcperu",
-        "MCP_WEB_DB_USER": "root"
+        "MCP_WEB_DB_USER": "mcp_agent_ro"
       }
     }
   }

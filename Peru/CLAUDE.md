@@ -221,7 +221,7 @@ Peru/
 
 - Nunca leer ni modificar `.env`, backups, credenciales ni archivos fuera de las raíces permitidas.
 - Las consultas SQL via MCP son de **solo lectura** (`SELECT`, `SHOW`, `DESCRIBE`, `EXPLAIN`).
-- El usuario del servidor es `mcp-agent` con clave SSH Ed25519, sin acceso root.
+- El usuario del servidor es `mcp-agent` con clave SSH RSA 4096, sin acceso root.
 - Historial de accesos en `/var/log/mcp-agent/` en el servidor remoto.
 - Variables sensibles **nunca en git**: SSH key, DB password, tokens de CI/CD.
 
