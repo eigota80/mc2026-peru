@@ -19,6 +19,18 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 import paramiko
 import pymysql
+
+# Compatibility shim: paramiko 5.x removed DSSKey; sshtunnel 0.4.0 references it at import time.
+# This stub prevents ImportError without affecting RSA/ED25519 functionality.
+if not hasattr(paramiko, "DSSKey"):
+    paramiko.DSSKey = type("DSSKey", (paramiko.PKey,), {  # type: ignore[attr-defined]
+        "get_name": lambda self: "ssh-dss",
+        "asbytes": lambda self: b"",
+        "sign_ssh_data": lambda self, m, k=None: b"",
+        "verify_ssh_sig": lambda self, m, msg: False,
+        "get_bits": lambda self: 0,
+    })
+
 from sshtunnel import SSHTunnelForwarder
 
 

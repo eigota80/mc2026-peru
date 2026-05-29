@@ -2,25 +2,104 @@
 
 Servidor MCP local por `stdio` para conectarse al hosting web y a la base MariaDB `bdmcperu` por SSH.
 
+> **Regla de oro:** Todo acceso al servidor remoto o a la base de datos DEBE pasar por este conector MCP.
+> Prohibido: SSH directo, SCP, clientes de BD externos, curl/wget de escritura.
+
 ---
 
-## Estado del servidor (2026-05-29)
-
-Bootstrap completado por MCP usando `root` para bootstrap inicial. Operacion normal desde `mcp-agent`:
+## Estado del servidor (actualizado 2026-05-29)
 
 | Parametro | Valor |
 |---|---|
-| Host | `179.43.82.54` (hosting.perunix.net) |
-| Usuario operacional | `mcp-agent` |
-| Autenticacion | Solo SSH Key RSA 4096 |
-| Fingerprint | `SHA256:GCxkhUI4ysNw9LJEayIFdF2BJjWRRrdZp51mVi/syBw` |
-| Kernel | Linux 3.10.0-1160.25.1.el7.x86_64 (CentOS 7) |
+| Host | `179.43.82.54` (CentOS 7, Linux 3.10.0) |
+| Usuario SSH operacional | `mcp-agent` |
+| Autenticacion SSH | Solo RSA 4096 — llave en `mcp_web_connector/id_rsa` |
+| Passphrase de la llave | En `.env` como `MCP_WEB_SSH_KEY_PASSPHRASE` (no en git) |
+| Fingerprint servidor | `SHA256:GCxkhUI4ysNw9LJEayIFdF2BJjWRRrdZp51mVi/syBw` |
 | PHP | 7.4.19 |
-| Estado MCP | **Operativo** — `ssh_health` OK como mcp-agent |
+| Usuario BD activo | `root` (temporal — ver pendientes) |
+| BD | `bdmcperu` — 69 tablas (WordPress + tablas custom) |
+| Estado MCP | **Operativo** — `config_summary` y consultas BD OK |
 
-Scripts completados: `01-setup-mcp-agent-user.sh`, `07-install-rsa-public-key.sh`, `04-harden-sshd.sh`.
+### Scripts completados
+- `01-setup-mcp-agent-user.sh` — usuario mcp-agent creado
+- `07-install-rsa-public-key.sh` — clave RSA instalada en authorized_keys
+- `04-harden-sshd.sh` — SSH hardening aplicado
 
-Pendiente: `03-setup-db-user.sh` (usuario MariaDB de solo lectura), `05-setup-staging.sh`.
+### Pendiente
+- `03-setup-db-user.sh` — crear usuario `mcp_agent_ro` (SELECT only) y reemplazar `root`
+- `05-setup-staging.sh` — entorno de staging en puerto 8080
+
+---
+
+## Inicio rapido para cualquier agente
+
+### 1. Verificar que el MCP responde
+
+```bash
+printf '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1"}}}\n{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"config_summary","arguments":{}}}\n' \
+  | /RUTA/mcp_web_connector/.venv/bin/python /RUTA/mcp_web_connector/server.py 2>/dev/null
+```
+
+Debe responder con el resumen de configuracion (sin credenciales).
+
+### 2. Verificacion obligatoria antes de cualquier tarea
+
+Ejecutar `config_summary`. Si falla, detener y reportar. No continuar sin MCP operativo.
+
+### 3. Skills disponibles via Claude Code
+
+Una vez el MCP esta cargado en `~/.claude/settings.json`, Claude Code expone estas herramientas:
+
+| Skill | Descripcion |
+|---|---|
+| `config_summary` | Verifica que el agente cargo bien la config |
+| `ssh_health` | Diagrama conectividad SSH y versiones del servidor |
+| `remote_list` | Lista archivos en directorio remoto |
+| `remote_read_text` | Lee archivo remoto (limite 100 000 bytes) |
+| `mysql_query_readonly` | SELECT / SHOW / DESCRIBE / EXPLAIN en bdmcperu |
+| `mysql_list_tables` | Lista tablas de la BD |
+| `mysql_describe_table` | Columnas de una tabla |
+| `wordpress_users` | Busca usuarios en wp_users |
+| `find_client_columns` | Detecta columnas de clientes/RUC/contacto |
+| `export_result_json` | Ejecuta SELECT y devuelve JSON |
+
+### 4. Configuracion en settings.json de Claude Code
+
+```json
+{
+  "mcpServers": {
+    "mcperu-web": {
+      "command": "/RUTA_ABSOLUTA/mcp_web_connector/.venv/bin/python",
+      "args": ["/RUTA_ABSOLUTA/mcp_web_connector/server.py"],
+      "env": {
+        "MCP_WEB_SSH_HOST": "179.43.82.54",
+        "MCP_WEB_SSH_PORT": "22",
+        "MCP_WEB_SSH_USER": "mcp-agent",
+        "MCP_WEB_SSH_KEY_FILE": "/RUTA_ABSOLUTA/mcp_web_connector/id_rsa",
+        "MCP_WEB_DB_HOST": "127.0.0.1",
+        "MCP_WEB_DB_PORT": "3306",
+        "MCP_WEB_DB_NAME": "bdmcperu",
+        "MCP_WEB_DB_USER": "root"
+      }
+    }
+  }
+}
+```
+
+> `MCP_WEB_SSH_KEY_PASSPHRASE` y `MCP_WEB_DB_PASSWORD` se leen del `.env` local — no incluirlos en settings.json.
+
+---
+
+## Problema conocido y solucion (2026-05-29)
+
+**Error:** `AttributeError: module 'paramiko' has no attribute 'DSSKey'`
+
+**Causa:** paramiko 5.x elimino la clase `DSSKey`; sshtunnel 0.4.0 la referencia al importar.
+
+**Solucion aplicada en `server.py`:** stub de compatibilidad insertado antes del `import sshtunnel`. No requiere downgrade ni actualizacion de dependencias.
+
+---
 
 ---
 
@@ -392,10 +471,26 @@ El archivo `.env` del conector esta en `.gitignore` y nunca se sube al repositor
 
 ## Conexion con Ordenes de Servicio
 
-El sistema `Peru/ordenes/` opera en `localStorage` y no requiere backend. Sus cambios siguen el mismo flujo WebOps:
+El sistema `Peru/ordenes/` tiene una tabla real en MariaDB (`orden_servicio`). Sus cambios siguen el flujo WebOps:
 
 - Cambios en `ordenes-servicio.js` → branch + PR + staging preview + aprobacion + merge
-- Actualizacion del logo (`LOGO_B64`) → mismo flujo
-- Integracion futura con MariaDB → jobs adicionales en el workflow de Actions
+- Consultas a BD → siempre via `mysql_query_readonly` del MCP
 
-Para la integracion futura con MariaDB, el usuario `mcp_agent_ro` (solo SELECT) es la identidad de acceso recomendada desde el conector MCP.
+### Estado de la tabla `orden_servicio` (Fase 1 — 2026-05-29)
+
+| Campo | Detalle |
+|---|---|
+| Tabla | `orden_servicio` |
+| Columnas | 23 — ver `ordenes/database/ordenes_servicio_schema.sql` |
+| Campo consecutivo | `numero_os` VARCHAR(10) con `UNIQUE KEY uq_numero_os` |
+| Maximo consecutivo | `000703` (4 registros activos) |
+| AUTO_INCREMENT id | 5 (proximo id seria 5) |
+| Estados presentes | `Creada` (3), `Facturacion validada` (1) |
+| Soft-delete | No implementado — pendiente Fase 2 |
+| Tabla de secuencia | No existe — el numero se gestiona en JS (localStorage) |
+
+> El respaldo completo de Fase 1 (schema, datos, checksums) esta en `~/mcperu_mariadb_export_20260529_130922/` en la maquina local.
+
+### Riesgo detectado en Fase 1
+
+El `numero_os` se genera actualmente en `localStorage` del navegador. Si se crean ordenes desde dos navegadores distintos sin sincronizacion, puede haber colision (el `UNIQUE KEY` en BD lo bloquea, pero el usuario vera un error). La Fase 2 debe centralizar la generacion del consecutivo en el backend PHP.

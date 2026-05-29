@@ -7,14 +7,15 @@
 ## Indice
 
 1. [Identidad del proyecto](#identidad)
-2. [Regla de uso exclusivo del MCP](#mcp-obligatorio)
-3. [Estructura del proyecto](#estructura)
-4. [Módulo Ordenes de Servicio](#ordenes-de-servicio)
-5. [Módulo SEO y sitio público](#seo-y-sitio-publico)
-6. [API PHP backend](#api-php)
-7. [Seguridad y produccion](#seguridad)
-8. [Flujo de trabajo y deploy](#flujo-de-trabajo)
-9. [Referencias clave](#referencias)
+2. [Estado actual del sistema](#estado-actual)
+3. [Regla de uso exclusivo del MCP](#mcp-obligatorio)
+4. [Estructura del proyecto](#estructura)
+5. [Módulo Ordenes de Servicio](#ordenes-de-servicio)
+6. [Módulo SEO y sitio público](#seo-y-sitio-publico)
+7. [API PHP backend](#api-php)
+8. [Seguridad y produccion](#seguridad)
+9. [Flujo de trabajo y deploy](#flujo-de-trabajo)
+10. [Referencias clave](#referencias)
 
 ---
 
@@ -25,6 +26,48 @@
 - **Idioma:** español, variante Peru
 - **Servidor de producción:** `179.43.82.54` (Apache, MariaDB `bdmcperu`)
 - **Repositorio:** rama principal `main`, rama activa según contexto
+
+---
+
+## Estado actual
+
+> Última actualización: 2026-05-29
+
+### MCP connector
+
+| Parametro | Valor |
+|---|---|
+| Estado | **Operativo** |
+| Llave SSH activa | `mcp_web_connector/id_rsa` (RSA 4096, con passphrase en `.env`) |
+| Usuario SSH | `mcp-agent` |
+| Usuario BD activo | `root` (temporal hasta crear `mcp_agent_ro` con script `03-setup-db-user.sh`) |
+| Fix aplicado | Stub `paramiko.DSSKey` en `server.py` para compatibilidad con paramiko 5.x |
+
+### Base de datos `bdmcperu`
+
+| Detalle | Valor |
+|---|---|
+| Tablas totales | 69 (WordPress + tablas custom) |
+| Tabla de órdenes | `orden_servicio` — 23 columnas |
+| Campo consecutivo | `numero_os` VARCHAR(10) — UNIQUE KEY |
+| Máximo `numero_os` | `000703` (4 registros totales) |
+| Estados activos | `Creada` (3), `Facturacion validada` (1) |
+| Soft-delete | **No implementado** — pendiente Fase 2 |
+
+### Procedimiento obligatorio para cualquier agente al iniciar
+
+```
+1. Verificar MCP: ejecutar config_summary.
+   Si falla → detener y reportar al usuario. No continuar.
+
+2. Si la tarea involucra la BD: ejecutar mysql_list_tables para confirmar acceso.
+
+3. Para leer archivos del servidor: usar remote_list y remote_read_text.
+
+4. Para cambios en el sitio: editar localmente → branch → PR → merge → CI/CD.
+
+5. NUNCA ejecutar INSERT/UPDATE/DELETE/ALTER via MCP ni directamente.
+```
 
 ---
 
@@ -176,20 +219,31 @@ Peru/
 ## Ordenes de Servicio
 
 - Módulo interno accesible solo por usuarios autenticados.
-- Datos de órdenes en `localStorage` del navegador (consecutivo desde 000700).
+- Datos de órdenes en MariaDB (`orden_servicio`) **y** en `localStorage` del navegador.
+- El consecutivo `numero_os` se genera actualmente en `localStorage` (riesgo de desincronización — Fase 2 lo centralizará en backend PHP).
 - Cotizaciones y clientes en MariaDB (`bdmcperu`): tablas `cotizacion`, `cotizacion_detalle`, `empresa`.
 - **No incluir ninguna URL de `ordenes/` en `sitemap.xml`.**
 - **Mantener `noindex,nofollow`** en todas las páginas del panel.
 - Consultas a la BD solo via MCP skill `mysql_query_readonly`.
-- Migración futura a MariaDB requiere implementar `F-04 mysql_write` (ver SKILLS.md).
+- Escritura en BD requiere endpoint PHP + `F-04 mysql_write` en MCP (ver SKILLS.md).
 
 ### Tablas principales en `bdmcperu`
 
 | Tabla | Descripción |
 |---|---|
+| `orden_servicio` | Órdenes de servicio — campo clave `numero_os` (UNIQUE), max `000703` |
 | `empresa` | Clientes / razones sociales, RUC, contactos |
 | `cotizacion` | Cabecera de cotizaciones |
 | `cotizacion_detalle` | Líneas de cada cotización |
+
+### Columnas de `orden_servicio`
+
+`id`, `numero_os`, `razon_social`, `ruc_dni`, `fecha`, `moneda`, `duracion`,
+`tipo_servicio`, `ciudad`, `dias_entrega`, `direccion_origen`, `direccion_destino`,
+`detalle`, `servicio`, `mrc`, `costo_instalacion`, `nrc`, `observacion`,
+`facilidades_pago`, `estado`, `created_by`, `created_at`, `updated_at`
+
+> Sin `deleted_at`/`deleted_by` — soft-delete pendiente de Fase 2.
 
 ---
 
@@ -251,4 +305,4 @@ Peru/
 
 ---
 
-*Última actualización: 2026-05-23 — Reorganización de carpetas + estructura final documentada*
+*Última actualización: 2026-05-29 — Fix MCP (paramiko 5.x), estado BD Fase 1, procedimiento de agente documentado*
