@@ -12,6 +12,22 @@
 	--os-success: #157347;
 }
 
+/* core.min.css fuerza font-family:icomoon !important en [class*=" fa-"].
+   Este bloque lo sobreescribe para que Font Awesome 5 CDN funcione.
+   ordenes-servicio.css carga último → mismo !important pero mayor orden → gana. */
+.fas,
+.far,
+.fab,
+.fal {
+	font-family: 'Font Awesome 5 Free' !important;
+	font-style: normal !important;
+}
+.fab {
+	font-family: 'Font Awesome 5 Brands' !important;
+}
+.fas { font-weight: 900 !important; }
+.far, .fal { font-weight: 400 !important; }
+
 .os-page {
 	min-height: 100vh;
 	margin: 0;
