@@ -176,6 +176,7 @@ jobs:
             --exclude='mcp_web_connector/' \
             --exclude='logs/' \
             --exclude='backend/' \
+            --rsync-path="sudo rsync" \
             -e "ssh -i ~/.ssh/mcp-agent-rsa -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no" \
             Peru/ \
             mcp-agent@179.43.82.54:/var/www/html/ || true
