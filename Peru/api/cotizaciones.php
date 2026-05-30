@@ -24,7 +24,7 @@ if ($method === 'GET') {
                 fecha, user_created, fecha_updated
          FROM cotizacion
          ORDER BY id DESC
-         LIMIT 2000'
+         LIMIT 300'
     );
     $rows = $stmt->fetchAll();
 

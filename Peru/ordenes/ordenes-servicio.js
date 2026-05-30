@@ -134,7 +134,11 @@
 	}
 
 	function writeStore(key, value) {
-		localStorage.setItem(key, JSON.stringify(value));
+		try {
+			localStorage.setItem(key, JSON.stringify(value));
+		} catch (e) {
+			console.warn('[writeStore] No se pudo guardar', key, e);
+		}
 	}
 
 	function makeId(prefix) {
@@ -439,8 +443,10 @@
 	}
 
 	function syncFromAPI() {
+		const page = getCurrentPage();
+		const needsCot = page === 'cotizaciones' || page === 'informes';
 		return syncClientsFromAPI()
-			.then(function() { return syncCotizacionesFromAPI(); })
+			.then(function() { return needsCot ? syncCotizacionesFromAPI() : Promise.resolve(); })
 			.then(function() { return syncOrdersFromAPI(); })
 			.catch(function(e) { console.warn('[API sync]', e); });
 	}
@@ -1342,8 +1348,14 @@
 		let lista = getVisibleCotizaciones();
 		if (filtroEstado)    { lista = lista.filter((c) => c.estado === filtroEstado); }
 		if (filtroComercial) { lista = lista.filter((c) => (c.comercial || '').toLowerCase().includes(filtroComercial.toLowerCase())); }
-		tbody.innerHTML = lista.length
-			? lista.map(cotizacionRow).join('')
+		const MAX_RENDER = 300;
+		const truncated = lista.length > MAX_RENDER;
+		const visible = truncated ? lista.slice(0, MAX_RENDER) : lista;
+		const nota = truncated
+			? `<tr><td colspan="8" class="os-empty" style="color:#888;font-size:.85rem">Mostrando ${MAX_RENDER} de ${lista.length} registros. Usa los filtros para acotar.</td></tr>`
+			: '';
+		tbody.innerHTML = visible.length
+			? visible.map(cotizacionRow).join('') + nota
 			: '<tr><td colspan="8" class="os-empty">Sin cotizaciones registradas.</td></tr>';
 		const metricEl = byId('metricCotizaciones');
 		if (metricEl) { metricEl.textContent = String(getVisibleCotizaciones().length); }
