@@ -22,8 +22,9 @@ Modulo comercial interno. Multi-pagina HTML + CSS + JS. Backend PHP en `api/`. D
 11. [Reset de datos](#reset-de-datos)
 12. [Importacion desde MariaDB](#importacion-desde-mariadb)
 13. [Deploy al servidor](#deploy-al-servidor)
-14. [Versionado de cache](#versionado-de-cache)
-15. [Guia para AI futura](#guia-para-ai-futura)
+14. [Mantenimiento local](#mantenimiento-local)
+15. [Versionado de cache](#versionado-de-cache)
+16. [Guia para AI futura](#guia-para-ai-futura)
 
 ---
 
@@ -283,6 +284,7 @@ Paginas de importacion disponibles (usar en el mismo navegador del sistema):
 |---|---|
 | `/ordenes/importar-clientes.html` | Importa clientes a localStorage |
 | `/ordenes/importar-cotizaciones.html` | Importa cotizaciones historicas |
+| `/ordenes/importar-ordenes.html` | Migra OS del localStorage a MariaDB via API |
 
 **Eliminar del servidor despues de usar** via MCP skill `remote_write_text` o peticion al administrador.
 
@@ -324,16 +326,48 @@ cp Clientes.html clientes.html
 
 ---
 
+## Mantenimiento local
+
+### Limpieza de duplicados ` 2`
+
+El 2026-05-30 se limpio el workspace local de copias creadas por Finder/iCloud con sufijo ` 2`.
+
+Resultado verificado:
+- 60 archivos duplicados `* 2*` eliminados dentro de `Peru/`.
+- 5 carpetas duplicadas/vacias `* 2*` eliminadas dentro de `Peru/`.
+- Todos los duplicados con archivo original fueron comparados antes de borrar; al final no quedo ningun archivo o carpeta `* 2*` en `Peru/`.
+- La unica diferencia util estaba en `ordenes/importar-ordenes 2.html`; se paso al archivo canonico `ordenes/importar-ordenes.html`.
+
+Cambio conservado en `ordenes/importar-ordenes.html`:
+- Se agrego Font Awesome para que los iconos `fas` rendericen correctamente.
+- Se actualizo el cache-buster de `ordenes-servicio.css` a `20260530-backend-v2`.
+
+Comando de verificacion local:
+
+```bash
+find "/Users/eidergonzaleztamara/Documents/web side/MC_2026/Peru" -name "* 2*" -print
+```
+
+El comando debe devolver salida vacia.
+
+Notas:
+- No borrar archivos canonicos sin comparar primero.
+- No subir ni desplegar copias con sufijo ` 2`.
+- `Peru/id_rsa.pub` aparece como no rastreado en git; no fue modificado durante esta limpieza.
+
+---
+
 ## Versionado de cache
 
 ```html
 <script src="ordenes-servicio.js?v=20260530-backend-v1"></script>
-<link rel="stylesheet" href="ordenes-servicio.css?v=20260530-backend-v1">
+<link rel="stylesheet" href="ordenes-servicio.css?v=20260530-backend-v2">
 ```
 
 Incrementar el sufijo en cada deploy que modifique JS o CSS. Patron: `YYYYMMDD-descripcion-vN`.
 
-**Version vigente:** `20260530-backend-v1` — Fase 2: consecutivo BD, soft-delete, boton borrar.
+**Version vigente JS:** `20260530-backend-v1` — Fase 2: consecutivo BD, soft-delete, boton borrar.
+**Version vigente CSS:** `20260530-backend-v2` — ajustes visuales y compatibilidad de iconos.
 
 ---
 
