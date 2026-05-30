@@ -164,14 +164,20 @@ jobs:
           chmod 600 ~/.ssh/mcp-agent-rsa
           ssh-keyscan -H 179.43.82.54 >> ~/.ssh/known_hosts
 
-      - name: Deploy a Produccion via SSH
+      - name: Deploy a Produccion via rsync
         run: |
+          rsync -avz --delete \
+            --exclude='.git' \
+            --exclude='*.md' \
+            --exclude='mcp_web_connector/.venv' \
+            --exclude='mcp_web_connector/.env' \
+            --exclude='mcp_web_connector/id_rsa' \
+            --exclude='logs/' \
+            -e "ssh -i ~/.ssh/mcp-agent-rsa -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no" \
+            Peru/ \
+            mcp-agent@179.43.82.54:/var/www/html/
           ssh -i ~/.ssh/mcp-agent-rsa \
-              -o BatchMode=yes \
-              -o IdentitiesOnly=yes \
-              -o PubkeyAuthentication=yes \
-              -o PasswordAuthentication=no \
-              -o StrictHostKeyChecking=yes \
+              -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no \
               mcp-agent@179.43.82.54 \
               "sudo /usr/local/bin/deploy-mcperu.sh production main"
 
