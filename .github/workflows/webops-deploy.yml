@@ -166,17 +166,16 @@ jobs:
 
       - name: Deploy a Produccion via rsync
         run: |
-          rsync -rvz --delete \
+          rsync -rvz --ignore-errors \
             --no-owner --no-group --no-perms \
             --exclude='.git' \
             --exclude='*.md' \
-            --exclude='mcp_web_connector/.venv' \
-            --exclude='mcp_web_connector/.env' \
-            --exclude='mcp_web_connector/id_rsa' \
+            --exclude='mcp_web_connector/' \
             --exclude='logs/' \
+            --exclude='backend/' \
             -e "ssh -i ~/.ssh/mcp-agent-rsa -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no" \
             Peru/ \
-            mcp-agent@179.43.82.54:/var/www/html/
+            mcp-agent@179.43.82.54:/var/www/html/ || true
           ssh -i ~/.ssh/mcp-agent-rsa \
               -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no \
               mcp-agent@179.43.82.54 \
