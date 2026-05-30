@@ -1,0 +1,22 @@
+[Unit]
+Description=Media Commerce Tickets Backend
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=tickets
+Group=tickets
+WorkingDirectory=/opt/tickets/backend
+EnvironmentFile=/opt/tickets/backend/.env
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/opt/tickets/backend/.venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8002
+Restart=always
+RestartSec=5
+TimeoutStopSec=30
+KillSignal=SIGINT
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

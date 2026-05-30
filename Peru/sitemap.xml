@@ -1,173 +1,211 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- === INICIO === -->
   <url>
     <loc>https://www.mcperu.pe/</loc>
-    <lastmod>2026-04-29T00:00:00-05:00</lastmod>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>1.00</priority>
   </url>
-  <url>
-    <loc>https://www.mcperu.pe/asesoramiento.html</loc>
-    <lastmod>2026-04-29T00:00:00-05:00</lastmod>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.mcperu.pe/asesoramiento/informacion-tecnica.html</loc>
-    <lastmod>2026-04-29T00:00:00-05:00</lastmod>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.mcperu.pe/asesoramiento/preguntas-frecuentes.html</loc>
-    <lastmod>2026-04-29T00:00:00-05:00</lastmod>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.mcperu.pe/asesoramiento/seguridad.html</loc>
-    <lastmod>2026-04-29T00:00:00-05:00</lastmod>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.mcperu.pe/asesoramiento/tips-de-seguridad.html</loc>
-    <lastmod>2026-04-29T00:00:00-05:00</lastmod>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.mcperu.pe/blog.html</loc>
-    <lastmod>2026-05-01T00:00:00-05:00</lastmod>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://www.mcperu.pe/blog/conectividad-empresarial-peru.html</loc>
-    <lastmod>2026-05-01T00:00:00-05:00</lastmod>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.mcperu.pe/blog/ciberseguridad-empresas-peru.html</loc>
-    <lastmod>2026-05-01T00:00:00-05:00</lastmod>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.mcperu.pe/blog/cloud-colaboracion-productividad.html</loc>
-    <lastmod>2026-05-01T00:00:00-05:00</lastmod>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.mcperu.pe/blog/redundancia-continuidad-operativa.html</loc>
-    <lastmod>2026-05-01T00:00:00-05:00</lastmod>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.mcperu.pe/blog/colaboracion-equipos-hibridos.html</loc>
-    <lastmod>2026-05-01T00:00:00-05:00</lastmod>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.mcperu.pe/blog/monitoreo-red-empresarial.html</loc>
-    <lastmod>2026-05-01T00:00:00-05:00</lastmod>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.mcperu.pe/cobertura.html</loc>
-    <lastmod>2026-04-29T00:00:00-05:00</lastmod>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.mcperu.pe/contactanos.html</loc>
-    <lastmod>2026-04-29T00:00:00-05:00</lastmod>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.mcperu.pe/encuesta-de-satisfaccion.html</loc>
-    <lastmod>2026-04-29T00:00:00-05:00</lastmod>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.mcperu.pe/gracias.html</loc>
-    <lastmod>2026-04-29T00:00:00-05:00</lastmod>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.mcperu.pe/informacion-tecnica.html</loc>
-    <lastmod>2026-04-29T00:00:00-05:00</lastmod>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.mcperu.pe/normas-y-regulaciones.html</loc>
-    <lastmod>2026-04-29T00:00:00-05:00</lastmod>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.mcperu.pe/normatividad-y-regulaciones/derechos-de-los-abonados.html</loc>
-    <lastmod>2026-04-29T00:00:00-05:00</lastmod>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.mcperu.pe/normatividad-y-regulaciones/reglamentos-del-consumidor.html</loc>
-    <lastmod>2026-04-29T00:00:00-05:00</lastmod>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.mcperu.pe/pqrs.html</loc>
-    <lastmod>2026-04-29T00:00:00-05:00</lastmod>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.mcperu.pe/preguntas-frecuentes.html</loc>
-    <lastmod>2026-04-29T00:00:00-05:00</lastmod>
-    <priority>0.70</priority>
-  </url>
+
+  <!-- === EMPRESA === -->
   <url>
     <loc>https://www.mcperu.pe/quienes-somos.html</loc>
-    <lastmod>2026-04-29T00:00:00-05:00</lastmod>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.mcperu.pe/seguridad.html</loc>
-    <lastmod>2026-04-29T00:00:00-05:00</lastmod>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.mcperu.pe/soluciones.html</loc>
-    <lastmod>2026-04-29T00:00:00-05:00</lastmod>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://www.mcperu.pe/soluciones/cloud.html</loc>
-    <lastmod>2026-04-29T00:00:00-05:00</lastmod>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://www.mcperu.pe/soluciones/collaboration.html</loc>
-    <lastmod>2026-04-29T00:00:00-05:00</lastmod>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://www.mcperu.pe/soluciones/connection.html</loc>
-    <lastmod>2026-04-29T00:00:00-05:00</lastmod>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://www.mcperu.pe/soluciones/security.html</loc>
-    <lastmod>2026-04-29T00:00:00-05:00</lastmod>
+    <lastmod>2026-04-29</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://www.mcperu.pe/sumate-al-equipo.html</loc>
-    <lastmod>2026-04-29T00:00:00-05:00</lastmod>
-    <priority>0.70</priority>
+    <lastmod>2026-04-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.60</priority>
+  </url>
+
+  <!-- === SOLUCIONES === -->
+  <url>
+    <loc>https://www.mcperu.pe/soluciones.html</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://www.mcperu.pe/tips-de-seguridad.html</loc>
-    <lastmod>2026-04-29T00:00:00-05:00</lastmod>
-    <priority>0.70</priority>
+    <loc>https://www.mcperu.pe/soluciones/connection.html</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.mcperu.pe/soluciones/cloud.html</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.mcperu.pe/soluciones/collaboration.html</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.mcperu.pe/soluciones/security.html</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- === LANDING CORPORATIVAS === -->
+  <url>
+    <loc>https://www.mcperu.pe/internet-corporativo-peru.html</loc>
+    <lastmod>2026-05-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://www.mcperu.pe/internet-dedicado-peru.html</loc>
+    <lastmod>2026-05-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://www.mcperu.pe/canales-de-datos-peru.html</loc>
+    <lastmod>2026-05-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://www.mcperu.pe/fibra-optica-empresas-peru.html</loc>
+    <lastmod>2026-05-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.90</priority>
+  </url>
+
+  <!-- === COBERTURA Y HERRAMIENTAS === -->
+  <url>
+    <loc>https://www.mcperu.pe/cobertura.html</loc>
+    <lastmod>2026-04-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
   </url>
   <url>
     <loc>https://www.mcperu.pe/velocimetro.html</loc>
-    <lastmod>2026-04-29T00:00:00-05:00</lastmod>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.50</priority>
+  </url>
+
+  <!-- === BLOG === -->
+  <url>
+    <loc>https://www.mcperu.pe/blog.html</loc>
+    <lastmod>2026-05-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.mcperu.pe/blog/conectividad-empresarial-peru.html</loc>
+    <lastmod>2026-05-01</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.70</priority>
   </url>
   <url>
-    <loc>https://www.mcperu.pe/Ordenes%20de%20servicios/ordenes-servicio.html</loc>
-    <lastmod>2026-05-18T00:00:00-05:00</lastmod>
+    <loc>https://www.mcperu.pe/blog/ciberseguridad-empresas-peru.html</loc>
+    <lastmod>2026-05-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://www.mcperu.pe/blog/cloud-colaboracion-productividad.html</loc>
+    <lastmod>2026-05-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://www.mcperu.pe/blog/redundancia-continuidad-operativa.html</loc>
+    <lastmod>2026-05-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://www.mcperu.pe/blog/colaboracion-equipos-hibridos.html</loc>
+    <lastmod>2026-05-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://www.mcperu.pe/blog/monitoreo-red-empresarial.html</loc>
+    <lastmod>2026-05-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <!-- === ASESORAMIENTO === -->
+  <url>
+    <loc>https://www.mcperu.pe/asesoramiento.html</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://www.mcperu.pe/asesoramiento/informacion-tecnica.html</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://www.mcperu.pe/asesoramiento/preguntas-frecuentes.html</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://www.mcperu.pe/asesoramiento/seguridad.html</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://www.mcperu.pe/asesoramiento/tips-de-seguridad.html</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+
+  <!-- === NORMATIVIDAD === -->
+  <url>
+    <loc>https://www.mcperu.pe/normas-y-regulaciones.html</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://www.mcperu.pe/normatividad-y-regulaciones/derechos-de-los-abonados.html</loc>
+    <lastmod>2026-04-29</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.60</priority>
   </url>
+  <url>
+    <loc>https://www.mcperu.pe/normatividad-y-regulaciones/reglamentos-del-consumidor.html</loc>
+    <lastmod>2026-04-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.60</priority>
+  </url>
+
+  <!-- === CONTACTO Y SOPORTE === -->
+  <url>
+    <loc>https://www.mcperu.pe/contactanos.html</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://www.mcperu.pe/pqrs.html</loc>
+    <lastmod>2026-05-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.60</priority>
+  </url>
+
+  <!-- NOTA: gracias.html y encuesta-de-satisfaccion.html excluidos (noindex) -->
+  <!-- NOTA: Ordenes de servicios excluidos (área interna) -->
+
 </urlset>

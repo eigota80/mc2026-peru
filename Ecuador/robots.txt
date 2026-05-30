@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+Disallow: /logs/
+Disallow: /php/
+Disallow: /error/
+Disallow: /*.sql$
+Disallow: /*.env$
+
+Sitemap: https://www.mediacommerce.ec/sitemap.xml

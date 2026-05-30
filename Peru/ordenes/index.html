@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5">
+<meta name="robots" content="noindex,nofollow">
+<title>Home | Media Commerce</title>
+<link rel="stylesheet" href="../css/core.min.css?v=2.3.19.05.13.0" type="text/css">
+<link rel="stylesheet" href="../style.css?v=20260428-global-nav" type="text/css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="ordenes-servicio.css?v=20260530-backend-v2" type="text/css">
+<link rel="icon" type="image/png" sizes="32x32" href="../images/system/favicon/favicon-32x32.png?v=2.3.19.05.13.0">
+</head>
+<body class="os-page">
+<main class="os-shell">
+	<section class="os-app" id="appView" hidden>
+		<header class="os-header">
+			<a href="../index.html" class="os-brand" aria-label="Media Commerce">
+				<img src="logo-mc.png?v=20260530" alt="Media Commerce">
+			</a>
+			<div class="os-header-copy">
+				<p class="os-eyebrow">Sistema de Ordenes de Servicio</p>
+				<h1 id="viewTitle">Home</h1>
+			</div>
+			<div class="os-session">
+				<strong id="sessionName"></strong>
+				<span id="sessionRole"></span>
+				<button type="button" class="os-icon-button" id="logoutBtn" aria-label="Cerrar sesion" title="Cerrar sesion">
+					<i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+				</button>
+			</div>
+		</header>
+
+		<nav class="os-nav" aria-label="Modulos">
+			<a href="index.html" class="os-nav-button is-active">
+				<i class="fas fa-home" aria-hidden="true"></i>
+				<span>Home</span>
+			</a>
+			<a href="dashboard.html" class="os-nav-button">
+				<i class="fas fa-chart-line" aria-hidden="true"></i>
+				<span>Dashboard</span>
+			</a>
+			<a href="Clientes.html" class="os-nav-button">
+				<i class="fas fa-building" aria-hidden="true"></i>
+				<span>Clientes</span>
+			</a>
+			<a href="ordenes.html" class="os-nav-button">
+				<i class="far fa-file-alt" aria-hidden="true"></i>
+				<span>Ordenes</span>
+			</a>
+			<a href="cotizaciones.html" class="os-nav-button">
+				<i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>
+				<span>Cotizaciones</span>
+			</a>
+			<a href="usuarios.html" class="os-nav-button" data-permission="manage_users">
+				<i class="fas fa-user-shield" aria-hidden="true"></i>
+				<span>Usuarios</span>
+			</a>
+			<a href="auditoria.html" class="os-nav-button" data-permission="manage_users">
+				<i class="fas fa-history" aria-hidden="true"></i>
+				<span>Auditoria</span>
+			</a>
+			<a href="informes.html" class="os-nav-button">
+				<i class="fas fa-chart-bar" aria-hidden="true"></i>
+				<span>Informes</span>
+			</a>
+		</nav>
+
+		<section class="os-home-panel" aria-label="Menu principal">
+			<button type="button" class="os-home-button" data-home-target="dashboard">
+				<i class="fas fa-chart-line" aria-hidden="true"></i>
+				<span>DASHBOARD</span>
+				<strong id="homeDashboardCount">0 ordenes</strong>
+			</button>
+			<button type="button" class="os-home-button" data-home-target="clientes">
+				<i class="fas fa-building" aria-hidden="true"></i>
+				<span>CLIENTES</span>
+				<strong id="homeClientesCount">0 clientes</strong>
+			</button>
+			<button type="button" class="os-home-button" data-home-target="ordenes">
+				<i class="far fa-file-alt" aria-hidden="true"></i>
+				<span>ORDENES</span>
+				<strong id="homeOrdenesCount">0 ordenes</strong>
+			</button>
+			<button type="button" class="os-home-button" data-home-target="cotizaciones">
+				<i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>
+				<span>COTIZACIONES</span>
+				<strong id="homeCotizacionesCount">0 cotizaciones</strong>
+			</button>
+			<button type="button" class="os-home-button" data-home-target="usuarios" data-permission="manage_users">
+				<i class="fas fa-user-shield" aria-hidden="true"></i>
+				<span>USUARIOS</span>
+				<strong id="homeUsuariosCount">0 usuarios</strong>
+			</button>
+			<button type="button" class="os-home-button" data-home-target="auditoria" data-permission="manage_users">
+				<i class="fas fa-history" aria-hidden="true"></i>
+				<span>AUDITORIAS</span>
+				<strong id="homeAuditoriasCount">0 eventos</strong>
+			</button>
+		</section>
+	</section>
+</main>
+<script src="ordenes-servicio.js?v=20260530-backend-v1"></script>
+</body>
+</html>

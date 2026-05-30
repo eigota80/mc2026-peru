@@ -2,6 +2,105 @@
 
 Servidor MCP local por `stdio` para conectarse al hosting web y a la base MariaDB `bdmcperu` por SSH.
 
+> **Regla de oro:** Todo acceso al servidor remoto o a la base de datos DEBE pasar por este conector MCP.
+> Prohibido: SSH directo, SCP, clientes de BD externos, curl/wget de escritura.
+
+---
+
+## Estado del servidor (actualizado 2026-05-29)
+
+| Parametro | Valor |
+|---|---|
+| Host | `179.43.82.54` (CentOS 7, Linux 3.10.0) |
+| Usuario SSH operacional | `mcp-agent` |
+| Autenticacion SSH | Solo RSA 4096 — llave en `mcp_web_connector/id_rsa` |
+| Passphrase de la llave | En `.env` como `MCP_WEB_SSH_KEY_PASSPHRASE` (no en git) |
+| Fingerprint servidor | `SHA256:GCxkhUI4ysNw9LJEayIFdF2BJjWRRrdZp51mVi/syBw` |
+| PHP | 7.4.19 |
+| Usuario BD activo | `root` (temporal — ver pendientes) |
+| BD | `bdmcperu` — 69 tablas (WordPress + tablas custom) |
+| Estado MCP | **Operativo** — `config_summary` y consultas BD OK |
+
+### Scripts completados
+- `01-setup-mcp-agent-user.sh` — usuario mcp-agent creado
+- `07-install-rsa-public-key.sh` — clave RSA instalada en authorized_keys
+- `04-harden-sshd.sh` — SSH hardening aplicado
+
+### Pendiente
+- `03-setup-db-user.sh` — crear usuario `mcp_agent_ro` (SELECT only) y reemplazar `root`
+- `05-setup-staging.sh` — entorno de staging en puerto 8080
+
+---
+
+## Inicio rapido para cualquier agente
+
+### 1. Verificar que el MCP responde
+
+```bash
+printf '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1"}}}\n{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"config_summary","arguments":{}}}\n' \
+  | /RUTA/mcp_web_connector/.venv/bin/python /RUTA/mcp_web_connector/server.py 2>/dev/null
+```
+
+Debe responder con el resumen de configuracion (sin credenciales).
+
+### 2. Verificacion obligatoria antes de cualquier tarea
+
+Ejecutar `config_summary`. Si falla, detener y reportar. No continuar sin MCP operativo.
+
+### 3. Skills disponibles via Claude Code
+
+Una vez el MCP esta cargado en `~/.claude/settings.json`, Claude Code expone estas herramientas:
+
+| Skill | Descripcion |
+|---|---|
+| `config_summary` | Verifica que el agente cargo bien la config |
+| `ssh_health` | Diagrama conectividad SSH y versiones del servidor |
+| `remote_list` | Lista archivos en directorio remoto |
+| `remote_read_text` | Lee archivo remoto (limite 100 000 bytes) |
+| `mysql_query_readonly` | SELECT / SHOW / DESCRIBE / EXPLAIN en bdmcperu |
+| `mysql_list_tables` | Lista tablas de la BD |
+| `mysql_describe_table` | Columnas de una tabla |
+| `wordpress_users` | Busca usuarios en wp_users |
+| `find_client_columns` | Detecta columnas de clientes/RUC/contacto |
+| `export_result_json` | Ejecuta SELECT y devuelve JSON |
+
+### 4. Configuracion en settings.json de Claude Code
+
+```json
+{
+  "mcpServers": {
+    "mcperu-web": {
+      "command": "/RUTA_ABSOLUTA/mcp_web_connector/.venv/bin/python",
+      "args": ["/RUTA_ABSOLUTA/mcp_web_connector/server.py"],
+      "env": {
+        "MCP_WEB_SSH_HOST": "179.43.82.54",
+        "MCP_WEB_SSH_PORT": "22",
+        "MCP_WEB_SSH_USER": "mcp-agent",
+        "MCP_WEB_SSH_KEY_FILE": "/RUTA_ABSOLUTA/mcp_web_connector/id_rsa",
+        "MCP_WEB_DB_HOST": "127.0.0.1",
+        "MCP_WEB_DB_PORT": "3306",
+        "MCP_WEB_DB_NAME": "bdmcperu",
+        "MCP_WEB_DB_USER": "root"
+      }
+    }
+  }
+}
+```
+
+> `MCP_WEB_SSH_KEY_PASSPHRASE` y `MCP_WEB_DB_PASSWORD` se leen del `.env` local — no incluirlos en settings.json.
+
+---
+
+## Problema conocido y solucion (2026-05-29)
+
+**Error:** `AttributeError: module 'paramiko' has no attribute 'DSSKey'`
+
+**Causa:** paramiko 5.x elimino la clase `DSSKey`; sshtunnel 0.4.0 la referencia al importar.
+
+**Solucion aplicada en `server.py`:** stub de compatibilidad insertado antes del `import sshtunnel`. No requiere downgrade ni actualizacion de dependencias.
+
+---
+
 ---
 
 ## Indice
@@ -54,7 +153,9 @@ cp .env.example .env
 chmod 600 .env
 ```
 
-Edita `.env` con las claves reales.
+Edita `.env` con la clave privada RSA local (`MCP_WEB_SSH_KEY_FILE`) y la clave de BD (`MCP_WEB_DB_PASSWORD`). No uses `MCP_WEB_SSH_PASSWORD` para este proyecto.
+
+Si la clave RSA esta cifrada, desbloqueala con `ssh-add ~/.ssh/id_rsa` y usa `MCP_WEB_SSH_ALLOW_AGENT=1`, o define `MCP_WEB_SSH_KEY_PASSPHRASE` solo en tu `.env` local.
 
 ---
 
@@ -72,7 +173,7 @@ Edita `.env` con las claves reales.
         "MCP_WEB_SSH_HOST": "179.43.82.54",
         "MCP_WEB_SSH_PORT": "22",
         "MCP_WEB_SSH_USER": "mcp-agent",
-        "MCP_WEB_SSH_KEY_PATH": "~/.ssh/mc2026/mcp-agent-mcperu",
+        "MCP_WEB_SSH_KEY_FILE": "~/.ssh/mc2026/mcp-agent-mcperu-rsa",
         "MCP_WEB_DB_NAME": "bdmcperu",
         "MCP_WEB_DB_USER": "mcp_agent_ro"
       }
@@ -104,7 +205,7 @@ El usuario `mcp-agent` es la identidad exclusiva del agente en el servidor `179.
 | Usuario del sistema | `mcp-agent` |
 | Acceso root | **Nunca** |
 | Permisos sudo | Solo `nginx restart` y scripts de deploy |
-| Autenticacion | Solo SSH Key (Ed25519) |
+| Autenticacion | Solo SSH Key RSA 4096 |
 | Login por password | **Deshabilitado** |
 | Acceso a BD | Solo `SELECT` en `bdmcperu` |
 | Historial de comandos | Guardado en `/var/log/mcp-agent/` |
@@ -172,11 +273,10 @@ Match User mcp-agent
     PasswordAuthentication no
     PubkeyAuthentication yes
     AuthenticationMethods publickey
-    AllowTcpForwarding no
+    AllowTcpForwarding local
     X11Forwarding no
     AllowAgentForwarding no
     PermitTunnel no
-    ChrootDirectory /home/mcp-agent
     ClientAliveInterval 300
     ClientAliveCountMax 6
     LogLevel VERBOSE
@@ -191,15 +291,18 @@ Todos los scripts estan en `mcp_web_connector/scripts/`. Ejecutar en orden como 
 ### Orden de ejecucion
 
 ```bash
+# En tu Mac (como usuario local):
+bash 02-generate-ssh-keys.sh       # Genera el par de claves SSH RSA 4096
+
 # En el servidor (como root):
 bash 01-setup-mcp-agent-user.sh    # Crea el usuario y permisos base
+PUBLIC_KEY_FILE=/tmp/id_rsa.pub bash 07-install-rsa-public-key.sh
 bash 03-setup-db-user.sh           # Crea el usuario MariaDB de solo lectura
 bash 04-harden-sshd.sh             # Restringe SSH para mcp-agent
 bash 05-setup-staging.sh           # Configura entorno de staging
-
-# En tu Mac (como usuario local):
-bash 02-generate-ssh-keys.sh       # Genera el par de claves SSH Ed25519
 ```
+
+Si quieres que `mcp-agent` acepte exclusivamente la clave RSA nueva, ejecuta el instalador con `REPLACE_AUTHORIZED_KEYS=1` despues de confirmar que tienes una sesion root abierta de respaldo.
 
 ### Comandos ejecutados (resumen)
 
@@ -220,8 +323,11 @@ mcp-agent ALL=(ALL) NOPASSWD: /usr/local/bin/deploy-mcperu.sh
 mcp-agent ALL=(ALL) NOPASSWD: /usr/local/bin/update-staging.sh
 EOF
 
-# 02 — SSH key (en Mac local)
-ssh-keygen -t ed25519 -C "mcp-agent@mcperu.pe" -f ~/.ssh/mc2026/mcp-agent-mcperu -N ""
+# 02 — SSH key RSA (en Mac local)
+ssh-keygen -t rsa -b 4096 -o -a 100 -C "mcp-agent-rsa@mcperu.pe" -f ~/.ssh/mc2026/mcp-agent-mcperu-rsa -N ""
+
+# 07 — Instalar clave publica RSA en authorized_keys (en servidor)
+PUBLIC_KEY_FILE=/tmp/id_rsa.pub bash 07-install-rsa-public-key.sh
 
 # 03 — Base de datos
 mysql -u root -e "CREATE USER 'mcp_agent_ro'@'localhost' IDENTIFIED BY '...';"
@@ -288,7 +394,7 @@ Sitio actualizado (https://mcperu.pe)
 
 | Secret | Descripcion |
 |---|---|
-| `MCP_AGENT_SSH_PRIVATE_KEY` | Clave privada Ed25519 del mcp-agent |
+| `MCP_AGENT_SSH_PRIVATE_KEY` | Clave privada RSA del mcp-agent |
 | `VERCEL_TOKEN` | Token de Vercel (si se usa Vercel en lugar de SSH) |
 | `VERCEL_ORG_ID` | ID de organizacion en Vercel |
 | `VERCEL_PROJECT_ID` | ID del proyecto en Vercel |
@@ -353,7 +459,7 @@ Cada rollback queda registrado en `/var/log/mcp-agent/rollback.log`:
 
 | Variable | Ubicacion en servidor | Uso |
 |---|---|---|
-| SSH private key | `~/.ssh/mc2026/mcp-agent-mcperu` (Mac local) | Conexion del agente |
+| SSH private key | `~/.ssh/mc2026/mcp-agent-mcperu-rsa` (Mac local) | Conexion del agente |
 | DB password (mcp_agent_ro) | `/etc/mcp-agent/db.env` | Lectura de BD |
 | DB password (root) | Variable de entorno en servidor | Administracion |
 | VERCEL_TOKEN | GitHub Secrets | Deploy a Vercel |
@@ -365,10 +471,26 @@ El archivo `.env` del conector esta en `.gitignore` y nunca se sube al repositor
 
 ## Conexion con Ordenes de Servicio
 
-El sistema `Peru/Ordenes de servicios/` opera en `localStorage` y no requiere backend. Sus cambios siguen el mismo flujo WebOps:
+El sistema `Peru/ordenes/` tiene una tabla real en MariaDB (`orden_servicio`). Sus cambios siguen el flujo WebOps:
 
 - Cambios en `ordenes-servicio.js` → branch + PR + staging preview + aprobacion + merge
-- Actualizacion del logo (`LOGO_B64`) → mismo flujo
-- Integracion futura con MariaDB → jobs adicionales en el workflow de Actions
+- Consultas a BD → siempre via `mysql_query_readonly` del MCP
 
-Para la integracion futura con MariaDB, el usuario `mcp_agent_ro` (solo SELECT) es la identidad de acceso recomendada desde el conector MCP.
+### Estado de la tabla `orden_servicio` (Fase 1 — 2026-05-29)
+
+| Campo | Detalle |
+|---|---|
+| Tabla | `orden_servicio` |
+| Columnas | 23 — ver `ordenes/database/ordenes_servicio_schema.sql` |
+| Campo consecutivo | `numero_os` VARCHAR(10) con `UNIQUE KEY uq_numero_os` |
+| Maximo consecutivo | `000703` (4 registros activos) |
+| AUTO_INCREMENT id | 5 (proximo id seria 5) |
+| Estados presentes | `Creada` (3), `Facturacion validada` (1) |
+| Soft-delete | No implementado — pendiente Fase 2 |
+| Tabla de secuencia | No existe — el numero se gestiona en JS (localStorage) |
+
+> El respaldo completo de Fase 1 (schema, datos, checksums) esta en `~/mcperu_mariadb_export_20260529_130922/` en la maquina local.
+
+### Riesgo detectado en Fase 1
+
+El `numero_os` se genera actualmente en `localStorage` del navegador. Si se crean ordenes desde dos navegadores distintos sin sincronizacion, puede haber colision (el `UNIQUE KEY` en BD lo bloquea, pero el usuario vera un error). La Fase 2 debe centralizar la generacion del consecutivo en el backend PHP.

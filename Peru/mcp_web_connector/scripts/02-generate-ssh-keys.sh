@@ -2,17 +2,18 @@
 # =============================================================================
 # Script: 02-generate-ssh-keys.sh
 # Ejecutar como: USUARIO LOCAL en tu Mac (no en el servidor)
-# Proposito: Generar par de claves SSH Ed25519 para el mcp-agent
+# Proposito: Generar par de claves SSH RSA para el mcp-agent
 # =============================================================================
 set -euo pipefail
 
-KEY_NAME="mcp-agent-mcperu"
+KEY_NAME="${KEY_NAME:-mcp-agent-mcperu-rsa}"
 KEY_DIR="$HOME/.ssh/mc2026"
+KEY_BITS="${KEY_BITS:-4096}"
 SERVER="179.43.82.54"
 SERVER_USER="mcp-agent"
 
 echo "============================================================"
-echo " Generando SSH Key para mcp-agent"
+echo " Generando SSH Key RSA para mcp-agent"
 echo "============================================================"
 
 mkdir -p "$KEY_DIR"
@@ -24,10 +25,13 @@ if [ -f "$KEY_DIR/$KEY_NAME" ]; then
     echo ""
 else
     ssh-keygen \
-        -t ed25519 \
-        -C "mcp-agent@mcperu.pe-$(date +%Y%m%d)" \
+        -t rsa \
+        -b "$KEY_BITS" \
+        -o \
+        -a 100 \
+        -C "mcp-agent-rsa@mcperu.pe-$(date +%Y%m%d)" \
         -f "$KEY_DIR/$KEY_NAME" \
-        -N ""
+        -N "${KEY_PASSPHRASE:-}"
 
     chmod 600 "$KEY_DIR/$KEY_NAME"
     chmod 644 "$KEY_DIR/$KEY_NAME.pub"
@@ -63,8 +67,21 @@ echo ""
 # Crear config SSH en el Mac para facilitar la conexion
 SSH_CONFIG="$HOME/.ssh/config"
 
-if ! grep -q "Host mcperu-agent" "$SSH_CONFIG" 2>/dev/null; then
-    cat >> "$SSH_CONFIG" << SSHCONF
+touch "$SSH_CONFIG"
+chmod 600 "$SSH_CONFIG"
+
+if grep -qE '^Host[[:space:]]+mcperu-agent$' "$SSH_CONFIG" 2>/dev/null; then
+    BACKUP="$SSH_CONFIG.backup.$(date +%Y%m%d%H%M%S)"
+    cp "$SSH_CONFIG" "$BACKUP"
+    awk '
+        /^Host[[:space:]]+mcperu-agent$/ { skip = 1; next }
+        /^Host[[:space:]]+/ { skip = 0 }
+        !skip { print }
+    ' "$BACKUP" > "$SSH_CONFIG"
+    echo "  Entrada anterior mcperu-agent respaldada en: $BACKUP"
+fi
+
+cat >> "$SSH_CONFIG" << SSHCONF
 
 Host mcperu-agent
     HostName $SERVER
@@ -75,12 +92,9 @@ Host mcperu-agent
     ServerAliveCountMax 3
     StrictHostKeyChecking accept-new
 SSHCONF
-    chmod 600 "$SSH_CONFIG"
-    echo "  ✓ Entrada agregada a ~/.ssh/config"
-    echo "     Ahora puedes conectarte con: ssh mcperu-agent"
-else
-    echo "  (Entrada mcperu-agent ya existe en ~/.ssh/config)"
-fi
+chmod 600 "$SSH_CONFIG"
+echo "  ✓ Entrada agregada a ~/.ssh/config"
+echo "     Ahora puedes conectarte con: ssh mcperu-agent"
 
 echo ""
 echo "============================================================"
@@ -88,11 +102,11 @@ echo " GITHUB ACTIONS SECRET"
 echo "============================================================"
 echo ""
 echo "Para que GitHub Actions use esta clave, agrega el contenido"
-echo "de la clave PRIVADA como secret en GitHub:"
+echo "de la clave PRIVADA como secret en GitHub."
+echo "Por seguridad, este script no imprime la clave privada."
 echo ""
 echo "  Nombre del secret: MCP_AGENT_SSH_PRIVATE_KEY"
-echo "  Valor:"
-cat "$KEY_DIR/$KEY_NAME"
+echo "  Archivo local: $KEY_DIR/$KEY_NAME"
 echo ""
 echo "  En GitHub: Settings → Secrets → Actions → New repository secret"
 echo ""

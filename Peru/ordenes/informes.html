@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5">
+<meta name="robots" content="noindex,nofollow">
+<title>Informes | Media Commerce</title>
+<link rel="stylesheet" href="../css/core.min.css?v=2.3.19.05.13.0" type="text/css">
+<link rel="stylesheet" href="../style.css?v=20260428-global-nav" type="text/css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="ordenes-servicio.css?v=20260530-backend-v2" type="text/css">
+<link rel="icon" type="image/png" sizes="32x32" href="../images/system/favicon/favicon-32x32.png?v=2.3.19.05.13.0">
+</head>
+<body class="os-page">
+<main class="os-shell">
+	<section class="os-app" id="appView" hidden>
+		<header class="os-header">
+			<a href="../index.html" class="os-brand" aria-label="Media Commerce">
+				<img src="logo-mc.png?v=20260530" alt="Media Commerce">
+			</a>
+			<div class="os-header-copy">
+				<p class="os-eyebrow">Sistema de Ordenes de Servicio</p>
+				<h1 id="viewTitle">Informes</h1>
+			</div>
+			<div class="os-session">
+				<strong id="sessionName"></strong>
+				<span id="sessionRole"></span>
+				<button type="button" class="os-icon-button" id="logoutBtn" aria-label="Cerrar sesion" title="Cerrar sesion">
+					<i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+				</button>
+			</div>
+		</header>
+
+		<nav class="os-nav" aria-label="Modulos">
+			<a href="index.html" class="os-nav-button">
+				<i class="fas fa-home" aria-hidden="true"></i>
+				<span>Home</span>
+			</a>
+			<a href="dashboard.html" class="os-nav-button">
+				<i class="fas fa-chart-line" aria-hidden="true"></i>
+				<span>Dashboard</span>
+			</a>
+			<a href="Clientes.html" class="os-nav-button">
+				<i class="fas fa-building" aria-hidden="true"></i>
+				<span>Clientes</span>
+			</a>
+			<a href="ordenes.html" class="os-nav-button">
+				<i class="far fa-file-alt" aria-hidden="true"></i>
+				<span>Ordenes</span>
+			</a>
+			<a href="cotizaciones.html" class="os-nav-button">
+				<i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>
+				<span>Cotizaciones</span>
+			</a>
+			<a href="usuarios.html" class="os-nav-button" data-permission="manage_users">
+				<i class="fas fa-user-shield" aria-hidden="true"></i>
+				<span>Usuarios</span>
+			</a>
+			<a href="auditoria.html" class="os-nav-button" data-permission="manage_users">
+				<i class="fas fa-history" aria-hidden="true"></i>
+				<span>Auditoria</span>
+			</a>
+			<a href="informes.html" class="os-nav-button is-active">
+				<i class="fas fa-chart-bar" aria-hidden="true"></i>
+				<span>Informes</span>
+			</a>
+		</nav>
+
+		<section class="os-panel">
+			<div class="os-section-head">
+				<h2>Periodo</h2>
+			</div>
+			<div class="os-period-bar">
+				<div class="os-period-buttons" id="periodButtons">
+					<button type="button" class="os-period-btn" data-period="hoy">Hoy</button>
+					<button type="button" class="os-period-btn" data-period="semana">Semana</button>
+					<button type="button" class="os-period-btn" data-period="mes">Mes</button>
+					<button type="button" class="os-period-btn" data-period="anio">Ano</button>
+					<button type="button" class="os-period-btn is-active" data-period="todo">Todo</button>
+				</div>
+				<div class="os-period-custom">
+					<label>
+						<span>Desde</span>
+						<input type="date" id="fechaDesde">
+					</label>
+					<label>
+						<span>Hasta</span>
+						<input type="date" id="fechaHasta">
+					</label>
+					<button type="button" class="os-button os-button-secondary" id="applyRangeBtn">
+						<i class="fas fa-filter" aria-hidden="true"></i>
+						<span>Aplicar</span>
+					</button>
+				</div>
+			</div>
+		</section>
+
+		<section class="os-panel">
+			<div class="os-section-head">
+				<h2>Resumen del periodo</h2>
+			</div>
+			<div class="os-informes-cards">
+				<div class="os-informes-card">
+					<span class="os-informes-card-label">Ordenes de Servicio</span>
+					<span class="os-informes-card-value" id="cardTotalOS">0</span>
+					<span class="os-informes-card-sub" id="cardSubOS">en el periodo</span>
+				</div>
+				<div class="os-informes-card">
+					<span class="os-informes-card-label">MRC Total</span>
+					<span class="os-informes-card-value" id="cardMrc">0</span>
+					<span class="os-informes-card-sub" id="cardSubMrc">en el periodo</span>
+				</div>
+				<div class="os-informes-card">
+					<span class="os-informes-card-label">Cotizaciones</span>
+					<span class="os-informes-card-value" id="cardTotalCot">0</span>
+					<span class="os-informes-card-sub" id="cardSubCot">en el periodo</span>
+				</div>
+				<div class="os-informes-card">
+					<span class="os-informes-card-label">Clientes activos</span>
+					<span class="os-informes-card-value" id="cardClientes">0</span>
+					<span class="os-informes-card-sub">total en el sistema</span>
+				</div>
+			</div>
+		</section>
+
+		<section class="os-panel">
+			<div class="os-section-head">
+				<h2>Graficas</h2>
+			</div>
+			<div class="os-charts-grid">
+				<div class="os-chart-wrap os-chart-wide">
+					<h3>Actividad — Ordenes y Cotizaciones por periodo</h3>
+					<canvas id="chartActividad"></canvas>
+				</div>
+				<div class="os-chart-wrap os-chart-wide">
+					<h3>MRC por periodo</h3>
+					<canvas id="chartMrc"></canvas>
+				</div>
+				<div class="os-chart-wrap">
+					<h3>Estados — Ordenes de Servicio</h3>
+					<canvas id="chartEstadosOS"></canvas>
+				</div>
+				<div class="os-chart-wrap">
+					<h3>Estados — Cotizaciones</h3>
+					<canvas id="chartEstadosCot"></canvas>
+				</div>
+				<div class="os-chart-wrap os-chart-wide">
+					<h3>Top comerciales por cotizaciones</h3>
+					<canvas id="chartComercial"></canvas>
+				</div>
+			</div>
+		</section>
+	</section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="ordenes-servicio.js?v=20260530-backend-v1"></script>
+<script>
+(function () {
+	'use strict';
+
+	var _charts = {};
+	var _activePeriod = 'todo';
+	var _customFrom = null;
+	var _customTo = null;
+
+	function destroyChart(id) {
+		if (_charts[id]) { _charts[id].destroy(); _charts[id] = null; }
+	}
+
+	function getDateRange(period) {
+		var now = new Date();
+		var from, to;
+		to = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+		if (period === 'hoy') {
+			from = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+		} else if (period === 'semana') {
+			var day = now.getDay();
+			var diff = (day === 0) ? -6 : 1 - day;
+			from = new Date(now.getFullYear(), now.getMonth(), now.getDate() + diff, 0, 0, 0, 0);
+		} else if (period === 'mes') {
+			from = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
+		} else if (period === 'anio') {
+			from = new Date(now.getFullYear(), 0, 1, 0, 0, 0, 0);
+		} else if (period === 'custom') {
+			from = _customFrom ? new Date(_customFrom + 'T00:00:00') : null;
+			to = _customTo ? new Date(_customTo + 'T23:59:59') : null;
+		} else {
+			from = null; to = null;
+		}
+		return { from: from, to: to };
+	}
+
+	function getGroupLabels(period, items, dateGetter) {
+		var now = new Date();
+		if (period === 'hoy') {
+			return Array.from({ length: 24 }, function (_, i) { return i + 'h'; });
+		}
+		if (period === 'semana') {
+			return ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'];
+		}
+		if (period === 'mes') {
+			var days = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+			return Array.from({ length: days }, function (_, i) { return String(i + 1); });
+		}
+		if (period === 'anio') {
+			return ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+		}
+		/* todo / custom — group by year */
+		var years = new Set();
+		items.forEach(function (it) {
+			var d = dateGetter(it);
+			if (d) { years.add(d.getFullYear()); }
+		});
+		var sorted = Array.from(years).sort();
+		if (sorted.length === 0) { sorted = [now.getFullYear()]; }
+		return sorted.map(String);
+	}
+
+	function getGroupIndex(period, date, labels) {
+		if (!date) { return -1; }
+		if (period === 'hoy') { return date.getHours(); }
+		if (period === 'semana') {
+			var d = date.getDay();
+			return d === 0 ? 6 : d - 1;
+		}
+		if (period === 'mes') { return date.getDate() - 1; }
+		if (period === 'anio') { return date.getMonth(); }
+		var yr = String(date.getFullYear());
+		return labels.indexOf(yr);
+	}
+
+	function parseDate(val) {
+		if (!val) { return null; }
+		if (typeof val === 'number') { return new Date(val); }
+		var d = new Date(val);
+		return isNaN(d.getTime()) ? null : d;
+	}
+
+	function filterByRange(items, dateGetter, from, to) {
+		return items.filter(function (it) {
+			var d = dateGetter(it);
+			if (!d) { return from === null && to === null; }
+			if (from && d < from) { return false; }
+			if (to && d > to) { return false; }
+			return true;
+		});
+	}
+
+	function loadData() {
+		var orders = [], cots = [], clients = [];
+		try { orders = JSON.parse(localStorage.getItem('mcperu_os_orders') || '[]'); } catch (e) {}
+		try { cots = JSON.parse(localStorage.getItem('mcperu_os_cotizaciones') || '[]'); } catch (e) {}
+		try { clients = JSON.parse(localStorage.getItem('mcperu_os_clients') || '[]'); } catch (e) {}
+		return { orders: orders, cots: cots, clients: clients };
+	}
+
+	function orderDate(o) {
+		return parseDate(o.created_at || o.fecha);
+	}
+
+	function cotDate(c) {
+		return parseDate(c.fecha);
+	}
+
+	var PALETTE = [
+		'#0b2e67', '#164991', '#42c8f4', '#ffd100',
+		'#157347', '#b42318', '#5d6b82', '#8b5cf6',
+		'#f97316', '#10b981', '#ef4444', '#3b82f6'
+	];
+
+	function buildCountArray(labels, items, dateGetter, period) {
+		var arr = labels.map(function () { return 0; });
+		items.forEach(function (it) {
+			var d = dateGetter(it);
+			var i = getGroupIndex(period, d, labels);
+			if (i >= 0 && i < arr.length) { arr[i]++; }
+		});
+		return arr;
+	}
+
+	function buildSumArray(labels, items, valueGetter, dateGetter, period) {
+		var arr = labels.map(function () { return 0; });
+		items.forEach(function (it) {
+			var d = dateGetter(it);
+			var i = getGroupIndex(period, d, labels);
+			if (i >= 0 && i < arr.length) { arr[i] += valueGetter(it) || 0; }
+		});
+		return arr;
+	}
+
+	function groupByKey(items, keyGetter) {
+		var map = {};
+		items.forEach(function (it) {
+			var k = keyGetter(it) || 'Sin dato';
+			map[k] = (map[k] || 0) + 1;
+		});
+		return map;
+	}
+
+	function renderCards(orders, cots, clients, period) {
+		var totalOS = orders.length;
+		var totalMrc = orders.reduce(function (s, o) { return s + (parseFloat(o.mrc) || 0); }, 0);
+		var totalCot = cots.length;
+		var totalCli = clients.length;
+
+		var label = period === 'todo' ? 'total acumulado' :
+			period === 'hoy' ? 'hoy' :
+			period === 'semana' ? 'esta semana' :
+			period === 'mes' ? 'este mes' :
+			period === 'anio' ? 'este ano' : 'en el rango';
+
+		document.getElementById('cardTotalOS').textContent = totalOS;
+		document.getElementById('cardSubOS').textContent = label;
+		document.getElementById('cardMrc').textContent = totalMrc.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+		document.getElementById('cardSubMrc').textContent = label;
+		document.getElementById('cardTotalCot').textContent = totalCot;
+		document.getElementById('cardSubCot').textContent = label;
+		document.getElementById('cardClientes').textContent = totalCli;
+	}
+
+	function renderChartActividad(labels, orders, cots, period) {
+		destroyChart('actividad');
+		var ctx = document.getElementById('chartActividad').getContext('2d');
+		_charts.actividad = new Chart(ctx, {
+			type: 'bar',
+			data: {
+				labels: labels,
+				datasets: [
+					{
+						label: 'Ordenes de Servicio',
+						data: buildCountArray(labels, orders, orderDate, period),
+						backgroundColor: 'rgba(11,46,103,.8)',
+						borderRadius: 4
+					},
+					{
+						label: 'Cotizaciones',
+						data: buildCountArray(labels, cots, cotDate, period),
+						backgroundColor: 'rgba(66,200,244,.75)',
+						borderRadius: 4
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				plugins: { legend: { position: 'top' } },
+				scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+			}
+		});
+	}
+
+	function renderChartMrc(labels, orders, period) {
+		destroyChart('mrc');
+		var ctx = document.getElementById('chartMrc').getContext('2d');
+		_charts.mrc = new Chart(ctx, {
+			type: 'bar',
+			data: {
+				labels: labels,
+				datasets: [
+					{
+						label: 'MRC',
+						data: buildSumArray(labels, orders, function (o) { return parseFloat(o.mrc) || 0; }, orderDate, period),
+						backgroundColor: 'rgba(21,115,71,.75)',
+						borderRadius: 4
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				plugins: { legend: { display: false } },
+				scales: { y: { beginAtZero: true } }
+			}
+		});
+	}
+
+	function renderChartEstadosOS(orders) {
+		destroyChart('estadosOS');
+		var map = groupByKey(orders, function (o) { return o.estado || o.status; });
+		var keys = Object.keys(map);
+		var ctx = document.getElementById('chartEstadosOS').getContext('2d');
+		_charts.estadosOS = new Chart(ctx, {
+			type: 'doughnut',
+			data: {
+				labels: keys,
+				datasets: [{ data: keys.map(function (k) { return map[k]; }), backgroundColor: PALETTE, borderWidth: 1 }]
+			},
+			options: {
+				responsive: true,
+				plugins: { legend: { position: 'right' } }
+			}
+		});
+	}
+
+	function renderChartEstadosCot(cots) {
+		destroyChart('estadosCot');
+		var map = groupByKey(cots, function (c) { return c.estado; });
+		var keys = Object.keys(map);
+		var ctx = document.getElementById('chartEstadosCot').getContext('2d');
+		_charts.estadosCot = new Chart(ctx, {
+			type: 'doughnut',
+			data: {
+				labels: keys,
+				datasets: [{ data: keys.map(function (k) { return map[k]; }), backgroundColor: PALETTE, borderWidth: 1 }]
+			},
+			options: {
+				responsive: true,
+				plugins: { legend: { position: 'right' } }
+			}
+		});
+	}
+
+	function renderChartComercial(cots) {
+		destroyChart('comercial');
+		var map = groupByKey(cots, function (c) { return c.comercial || c.cotComercial; });
+		var sorted = Object.entries(map).sort(function (a, b) { return b[1] - a[1]; }).slice(0, 8);
+		var ctx = document.getElementById('chartComercial').getContext('2d');
+		_charts.comercial = new Chart(ctx, {
+			type: 'bar',
+			data: {
+				labels: sorted.map(function (e) { return e[0]; }),
+				datasets: [
+					{
+						label: 'Cotizaciones',
+						data: sorted.map(function (e) { return e[1]; }),
+						backgroundColor: PALETTE.slice(0, sorted.length),
+						borderRadius: 4
+					}
+				]
+			},
+			options: {
+				indexAxis: 'y',
+				responsive: true,
+				plugins: { legend: { display: false } },
+				scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } }
+			}
+		});
+	}
+
+	function renderAll() {
+		var data = loadData();
+		var range = getDateRange(_activePeriod);
+
+		var filteredOrders = range.from === null && range.to === null
+			? data.orders
+			: filterByRange(data.orders, orderDate, range.from, range.to);
+
+		var filteredCots = range.from === null && range.to === null
+			? data.cots
+			: filterByRange(data.cots, cotDate, range.from, range.to);
+
+		renderCards(filteredOrders, filteredCots, data.clients, _activePeriod);
+
+		var labels = getGroupLabels(_activePeriod, filteredOrders.concat(filteredCots), function (it) {
+			return orderDate(it) || cotDate(it);
+		});
+
+		renderChartActividad(labels, filteredOrders, filteredCots, _activePeriod);
+		renderChartMrc(labels, filteredOrders, _activePeriod);
+		renderChartEstadosOS(filteredOrders);
+		renderChartEstadosCot(filteredCots);
+		renderChartComercial(filteredCots);
+	}
+
+	window.renderInformesPage = function () {
+		/* period buttons */
+		var periodButtons = document.getElementById('periodButtons');
+		if (periodButtons) {
+			periodButtons.addEventListener('click', function (e) {
+				var btn = e.target.closest('[data-period]');
+				if (!btn) { return; }
+				document.querySelectorAll('.os-period-btn').forEach(function (b) { b.classList.remove('is-active'); });
+				btn.classList.add('is-active');
+				_activePeriod = btn.dataset.period;
+				_customFrom = null;
+				_customTo = null;
+				document.getElementById('fechaDesde').value = '';
+				document.getElementById('fechaHasta').value = '';
+				renderAll();
+			});
+		}
+
+		/* custom date range */
+		var applyBtn = document.getElementById('applyRangeBtn');
+		if (applyBtn) {
+			applyBtn.addEventListener('click', function () {
+				var desde = document.getElementById('fechaDesde').value;
+				var hasta = document.getElementById('fechaHasta').value;
+				if (!desde && !hasta) { return; }
+				document.querySelectorAll('.os-period-btn').forEach(function (b) { b.classList.remove('is-active'); });
+				_activePeriod = 'custom';
+				_customFrom = desde || null;
+				_customTo = hasta || null;
+				renderAll();
+			});
+		}
+
+		renderAll();
+	};
+}());
+</script>
+</body>
+</html>

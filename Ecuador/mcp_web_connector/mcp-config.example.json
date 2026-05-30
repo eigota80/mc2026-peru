@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "mcecuador-web": {
+      "command": "/Users/eidergonzaleztamara/Documents/web side/MC_2026/Ecuador/mcp_web_connector/.venv/bin/python",
+      "args": [
+        "/Users/eidergonzaleztamara/Documents/web side/MC_2026/Ecuador/mcp_web_connector/server.py"
+      ],
+      "env": {
+        "MCP_WEB_SSH_HOST": "hc-02.webserver.ec",
+        "MCP_WEB_SSH_PORT": "22",
+        "MCP_WEB_SSH_USER": "mediaco2",
+        "MCP_WEB_SSH_KEY_FILE": "/Users/eidergonzaleztamara/.ssh/mc2026/mcecuador-mediaco2",
+        "MCP_WEB_ALLOWED_ROOTS": "/home/mediaco2/public_html,/home/mediaco2,/home"
+      }
+    }
+  }
+}

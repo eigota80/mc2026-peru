@@ -1,21 +1,35 @@
 <!DOCTYPE html>
 <html lang="es" class="no-js">
-<script> document.documentElement.classList.remove("no-js"); </script>
 <head>
-<title>Redundancia de enlaces: cuándo conviene tener respaldo | Media Commerce Perú</title>
-<meta name="description" content="Qué considerar al diseñar enlaces de respaldo para continuidad operativa y servicios críticos empresariales.">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-R4PVGLZDS8"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-R4PVGLZDS8');
+</script>
+<meta charset="utf-8">
+<script>document.documentElement.classList.remove("no-js")</script>
+<title>Respaldo de red y continuidad operativa | Media Commerce</title>
+<meta name="description" content="Qué considerar al diseñar enlaces de respaldo: tipo de tecnología, tiempos de conmutación y criterios para garantizar la continuidad operativa empresarial.">
 <meta property="og:title" content="Redundancia de enlaces: cuándo conviene tener respaldo | Media Commerce Perú">
 <meta property="og:description" content="Qué considerar al diseñar enlaces de respaldo para continuidad operativa y servicios críticos empresariales.">
+<meta property="og:image" content="https://www.mcperu.pe/images/system/og/og-blog.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Media Commerce Perú">
+<meta name="twitter:image" content="https://www.mcperu.pe/images/system/og/og-blog.jpg">
 <meta property="og:url" content="https://www.mcperu.pe/blog/redundancia-continuidad-operativa.html">
 <link rel="canonical" href="https://www.mcperu.pe/blog/redundancia-continuidad-operativa.html">
-<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5">
 <link rel="stylesheet" href="../css/core.min.css?v=2.3.19.05.13.0" type="text/css">
 <link rel="stylesheet" href="../style.css?v=20260501-blog" type="text/css">
 </head>
 <body class="blog-page">
 <header class="headerMenu"><div class="menu-btn"><i class="menu_btn-icon"><span class="menu_btn_bars-1"></span><span class="menu_btn_bars-2"></span><span class="menu_btn_bars-3"></span></i><i class="fa-mc-02 close-btn-icon"></i></div><section class="menu_content-logo"><a href="../index.html" class="menu-logo" title="Inicio Media Commerce"><img src="../images/controls/navigation/media-commerce-white.svg?v=2.3.19.05.13.0" alt="Media Commerce"></a></section><div class="menu-call"><span class="menu_call-icon"><i class="fas fa-phone-volume"></i></span><i class="fa-mc-01 close-btn-icon"></i></div></header>
-<nav class="mainNav"><ul class="mainNav-navigation"><section class="small-12 medium-12 large-3 columns mainNav_navigation-content-1"><li><a href="../index.html" class="mainNav-btn">Inicio</a></li><li><a href="../soluciones.html" class="mainNav-btn">Soluciones</a></li><li><a href="../quienes-somos.html" class="mainNav-btn">¿Quiénes Somos?</a></li><li><a href="../contactanos.html" class="mainNav-btn">Contacto</a></li></section><section class="small-12 medium-4 large-3 columns mainNav_navigation-content-2"><li><a href="../soluciones/connection.html" class="mainNav-btn"><i class="background l-negocio l-negocio_1"></i>Connection</a></li><li><a href="../soluciones/cloud.html" class="mainNav-btn"><i class="background l-negocio l-negocio_2"></i>Cloud</a></li><li><a href="../soluciones/collaboration.html" class="mainNav-btn"><i class="background l-negocio l-negocio_3"></i>Collaboration</a></li><li><a href="../soluciones/security.html" class="mainNav-btn"><i class="background l-negocio l-negocio_4"></i>Security</a></li></section><section class="small-12 medium-4 large-3 columns mainNav_navigation-content-3"><li><a href="../cobertura.html" class="mainNav-btn">Cobertura</a></li><li><a href="../velocimetro.html" class="mainNav-btn">Velocímetro</a></li><li><a href="../normas-y-regulaciones.html" class="mainNav-btn">Normas y regulaciones</a></li><li><a href="../asesoramiento.html" class="mainNav-btn">Asesoramiento</a></li><li><a href="../blog.html" class="mainNav-btn mainNav-btn-active">Blog</a></li><li><a href="../Ordenes de servicios/ordenes-servicio.html" class="mainNav-btn">Ordenes de servicio</a></li></section><section class="small-12 medium-4 large-3 columns mainNav_navigation-content-4"><li><a href="http://190.216.102.12/cacti" class="mainNav-btn" target="_blank" rel="noreferrer">Estadísticas gráficas</a></li><li><a href="../encuesta-de-satisfaccion.html" class="mainNav-btn">Encuesta de satisfacción</a></li><li><a href="../pqrs.html" class="mainNav-btn">PQRSF</a></li><li><a href="http://201.234.215.12/osticket/upload" class="mainNav-btn" target="_blank" rel="noreferrer">Generar Ticket</a></li>
+<nav class="mainNav"><ul class="mainNav-navigation"><section class="small-12 medium-12 large-3 columns mainNav_navigation-content-1"><li><a href="../index.html" class="mainNav-btn">Inicio</a></li><li><a href="../soluciones.html" class="mainNav-btn">Soluciones</a></li><li><a href="../quienes-somos.html" class="mainNav-btn">¿Quiénes Somos?</a></li><li><a href="../contactanos.html" class="mainNav-btn">Contacto</a></li></section><section class="small-12 medium-4 large-3 columns mainNav_navigation-content-2"><li><a href="../soluciones/connection.html" class="mainNav-btn"><i class="background l-negocio l-negocio_1"></i>Connection</a></li><li><a href="../soluciones/cloud.html" class="mainNav-btn"><i class="background l-negocio l-negocio_2"></i>Cloud</a></li><li><a href="../soluciones/collaboration.html" class="mainNav-btn"><i class="background l-negocio l-negocio_3"></i>Collaboration</a></li><li><a href="../soluciones/security.html" class="mainNav-btn"><i class="background l-negocio l-negocio_4"></i>Security</a></li></section><section class="small-12 medium-4 large-3 columns mainNav_navigation-content-3"><li><a href="../cobertura.html" class="mainNav-btn">Cobertura</a></li><li><a href="../velocimetro.html" class="mainNav-btn">Velocímetro</a></li><li><a href="../normas-y-regulaciones.html" class="mainNav-btn">Normas y regulaciones</a></li><li><a href="../asesoramiento.html" class="mainNav-btn">Asesoramiento</a></li><li><a href="../blog.html" class="mainNav-btn mainNav-btn-active">Blog</a></li><li><a href="../ordenes/ordenes-servicio.html" class="mainNav-btn">Ordenes de servicio</a></li></section><section class="small-12 medium-4 large-3 columns mainNav_navigation-content-4"><li><a href="http://190.216.102.12/cacti" class="mainNav-btn" target="_blank" rel="noreferrer">Estadísticas gráficas</a></li><li><a href="../encuesta-de-satisfaccion.html" class="mainNav-btn">Encuesta de satisfacción</a></li><li><a href="../pqrs.html" class="mainNav-btn">PQRSF</a></li><li><a href="http://201.234.215.12/osticket/upload" class="mainNav-btn" target="_blank" rel="noreferrer">Generar Ticket</a></li>
 			<li><a href="https://webmail.mediacommerce.ec" class="mainNav-btn" target="_blank" rel="noreferrer">Correo MC</a></li></section></ul></nav>
 <div class="box-overlay"></div>
 <main>
