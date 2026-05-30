@@ -31,7 +31,7 @@
 
 ## Estado actual
 
-> Última actualización: 2026-05-29
+> Última actualización: 2026-05-30
 
 ### MCP connector
 
@@ -48,11 +48,11 @@
 | Detalle | Valor |
 |---|---|
 | Tablas totales | 69 (WordPress + tablas custom) |
-| Tabla de órdenes | `orden_servicio` — 23 columnas |
+| Tabla de órdenes | `orden_servicio` — 25 columnas |
 | Campo consecutivo | `numero_os` VARCHAR(10) — UNIQUE KEY |
 | Máximo `numero_os` | `000703` (4 registros totales) |
 | Estados activos | `Creada` (3), `Facturacion validada` (1) |
-| Soft-delete | **No implementado** — pendiente Fase 2 |
+| Soft-delete | **Implementado** — `deleted_at` / `deleted_by`, estado `ELIMINADA` |
 
 ### Procedimiento obligatorio para cualquier agente al iniciar
 
@@ -219,19 +219,20 @@ Peru/
 ## Ordenes de Servicio
 
 - Módulo interno accesible solo por usuarios autenticados.
-- Datos de órdenes en MariaDB (`orden_servicio`) **y** en `localStorage` del navegador.
-- El consecutivo `numero_os` se genera actualmente en `localStorage` (riesgo de desincronización — Fase 2 lo centralizará en backend PHP).
+- Datos de órdenes en MariaDB (`orden_servicio`) y cache local en `localStorage`.
+- El consecutivo `numero_os` lo genera `api/create-order.php` desde la tabla `secuencias`.
 - Cotizaciones y clientes en MariaDB (`bdmcperu`): tablas `cotizacion`, `cotizacion_detalle`, `empresa`.
 - **No incluir ninguna URL de `ordenes/` en `sitemap.xml`.**
 - **Mantener `noindex,nofollow`** en todas las páginas del panel.
 - Consultas a la BD solo via MCP skill `mysql_query_readonly`.
-- Escritura en BD requiere endpoint PHP + `F-04 mysql_write` en MCP (ver SKILLS.md).
+- Escritura en BD requiere endpoint PHP y flujo seguro aprobado por el usuario. No escribir directo en MariaDB desde agentes.
 
 ### Tablas principales en `bdmcperu`
 
 | Tabla | Descripción |
 |---|---|
 | `orden_servicio` | Órdenes de servicio — campo clave `numero_os` (UNIQUE), max `000703` |
+| `secuencias` | Consecutivos atomicos; fila `orden_servicio` con valor actual `703` |
 | `empresa` | Clientes / razones sociales, RUC, contactos |
 | `cotizacion` | Cabecera de cotizaciones |
 | `cotizacion_detalle` | Líneas de cada cotización |
@@ -241,9 +242,10 @@ Peru/
 `id`, `numero_os`, `razon_social`, `ruc_dni`, `fecha`, `moneda`, `duracion`,
 `tipo_servicio`, `ciudad`, `dias_entrega`, `direccion_origen`, `direccion_destino`,
 `detalle`, `servicio`, `mrc`, `costo_instalacion`, `nrc`, `observacion`,
-`facilidades_pago`, `estado`, `created_by`, `created_at`, `updated_at`
+`facilidades_pago`, `estado`, `created_by`, `created_at`, `updated_at`,
+`deleted_at`, `deleted_by`
 
-> Sin `deleted_at`/`deleted_by` — soft-delete pendiente de Fase 2.
+> Soft-delete: borrar una OS marca `estado=ELIMINADA`, `deleted_at` y `deleted_by`; nunca se reutiliza el `numero_os`.
 
 ---
 
@@ -265,7 +267,7 @@ Peru/
 
 ## API PHP
 
-- Endpoints en `api/`: `ordenes.php`, `cotizaciones.php`, `clientes.php`
+- Endpoints en `api/`: `ordenes.php`, `create-order.php`, `delete-order.php`, `cotizaciones.php`, `clientes.php`
 - Configuración de conexión en `api/config.php` (credenciales en `.env` local, no en git)
 - Las consultas desde agentes IA van vía MCP, no llamando directamente a los endpoints PHP
 
@@ -305,4 +307,4 @@ Peru/
 
 ---
 
-*Última actualización: 2026-05-29 — Fix MCP (paramiko 5.x), estado BD Fase 1, procedimiento de agente documentado*
+*Última actualización: 2026-05-30 — Onboarding de agentes, estado BD Fase 2, consecutivo centralizado y soft-delete documentados*

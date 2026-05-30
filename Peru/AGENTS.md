@@ -4,6 +4,62 @@
 
 Estas instrucciones aplican a todo el proyecto `Peru`.
 
+## Inicio Obligatorio Para Cualquier Agente
+
+1. Leer este archivo completo antes de editar.
+2. Revisar `CLAUDE.md` para contexto del proyecto, estructura y reglas de produccion.
+3. Si la tarea toca `ordenes/`, leer tambien `ordenes/README.md`.
+4. Si la tarea toca el servidor remoto o la base de datos, verificar primero el MCP `mcperu-web` con `config_summary`. Si falla, detenerse y reportar.
+5. Si la tarea es SEO, cargar primero el skill local en `mcp_web_connector/agents/SKILL.md`.
+6. Antes de editar, revisar `git status --short` y no revertir cambios ajenos.
+
+## Mapa Rapido Del Proyecto
+
+- `index.html`, `style.css`, `css/`, `js/`, `images/`: sitio publico.
+- `soluciones/`, `blog/`, `asesoramiento/`, `normatividad-y-regulaciones/`: secciones publicas.
+- `ordenes/`: panel interno de ordenes, clientes, cotizaciones y usuarios. Mantener fuera de indexacion.
+- `api/`: endpoints PHP usados por el panel interno y formularios.
+- `database/`: schemas y migraciones SQL de referencia.
+- `php/`: formularios publicos, plantillas de email y librerias PHP.
+- `mcp_web_connector/`: conector MCP obligatorio para servidor/BD. No tocar secretos.
+- `seo/`: auditorias, estrategia y backlinks.
+
+## Flujo De Trabajo Para Cambios Locales
+
+- Mantener los cambios pequenos y cercanos a la tarea.
+- Usar `rg` para buscar referencias antes de modificar HTML/CSS/JS compartido.
+- Para paginas publicas, conservar `lang="es"`, viewport movil, canonical, metas y assets existentes.
+- Para el panel `ordenes/`, conservar `noindex,nofollow`, proteccion de sesion y versionado `?v=` cuando cambie JS/CSS.
+- Para endpoints PHP, validar rutas relativas desde produccion (`/var/www/html`) y no hardcodear secretos.
+- Para cambios SQL, crear migracion en `database/migrations/` y documentar el flujo seguro; no ejecutar escritura en BD salvo aprobacion explicita y herramienta segura.
+- No crear copias con sufijo ` 2`; si aparecen, comparar con el original antes de borrar.
+
+## Validacion Local Recomendada
+
+- Sitio estatico:
+  - `python3 -m http.server 8001` desde `Peru/`
+  - Revisar `http://127.0.0.1:8001/`
+  - Revisar recursos locales con `curl -I` o navegador.
+- Duplicados:
+  - `find "/Users/eidergonzaleztamara/Documents/web side/MC_2026/Peru" -name "* 2*" -print`
+- SEO estatico:
+  - `rg -n "<title|meta name=\"description\"|canonical|robots|og:|twitter:" *.html soluciones blog asesoramiento`
+  - Validar `sitemap.xml` como XML bien formado si se edita.
+- Panel `ordenes/`:
+  - Revisar `ordenes/README.md`.
+  - Confirmar que HTML carga `ordenes-servicio.css` y `ordenes-servicio.js` con cache-buster vigente.
+
+## Git Y Entrega
+
+- Incluir en el commit solo archivos relacionados con la tarea.
+- No incluir `id_rsa.pub`, `.env`, backups, logs sensibles ni archivos temporales.
+- Antes de finalizar, reportar:
+  - archivos modificados,
+  - validaciones ejecutadas,
+  - cambios no relacionados que quedaron fuera,
+  - si hay servidor local corriendo.
+- Si se hace commit, usar mensaje claro y verificar `git log -1 --oneline`.
+
 ## Skill SEO Del Proyecto
 
 - Para cualquier tarea de SEO, contenido, arquitectura, metadatos, indexacion, sitemap, robots, schema, auditoria o mejora de posicionamiento, carga primero el skill local en `mcp_web_connector/agents/SKILL.md`.
@@ -29,6 +85,7 @@ Estas instrucciones aplican a todo el proyecto `Peru`.
 - No usar SSH directo ni credenciales fuera del conector descrito en `mcp_web_connector/SKILLS.md`.
 - Las consultas a base de datos deben ser de solo lectura salvo instruccion explicita del usuario y flujo seguro aprobado.
 - No tocar secretos, `.env`, backups ni archivos de produccion desde este workspace.
+- No desplegar a produccion sin instruccion explicita del usuario. Si se despliega o lee produccion, hacerlo solo via MCP `mcperu-web`.
 
 ## Validacion Recomendada
 

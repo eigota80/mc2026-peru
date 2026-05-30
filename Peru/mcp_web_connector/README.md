@@ -475,22 +475,23 @@ El sistema `Peru/ordenes/` tiene una tabla real en MariaDB (`orden_servicio`). S
 
 - Cambios en `ordenes-servicio.js` → branch + PR + staging preview + aprobacion + merge
 - Consultas a BD → siempre via `mysql_query_readonly` del MCP
+- Estado funcional vigente del modulo → ver `Peru/ordenes/README.md`
 
-### Estado de la tabla `orden_servicio` (Fase 1 — 2026-05-29)
+### Estado de la tabla `orden_servicio` (Fase 2 — 2026-05-30)
 
 | Campo | Detalle |
 |---|---|
 | Tabla | `orden_servicio` |
-| Columnas | 23 — ver `ordenes/database/ordenes_servicio_schema.sql` |
+| Columnas | 25 — ver `database/ordenes_servicio_schema.sql` y `database/migrations/` |
 | Campo consecutivo | `numero_os` VARCHAR(10) con `UNIQUE KEY uq_numero_os` |
 | Maximo consecutivo | `000703` (4 registros activos) |
 | AUTO_INCREMENT id | 5 (proximo id seria 5) |
 | Estados presentes | `Creada` (3), `Facturacion validada` (1) |
-| Soft-delete | No implementado — pendiente Fase 2 |
-| Tabla de secuencia | No existe — el numero se gestiona en JS (localStorage) |
+| Soft-delete | Implementado con `deleted_at`, `deleted_by` y estado `ELIMINADA` |
+| Tabla de secuencia | `secuencias`, fila `orden_servicio`, valor actual `703` |
 
 > El respaldo completo de Fase 1 (schema, datos, checksums) esta en `~/mcperu_mariadb_export_20260529_130922/` en la maquina local.
 
-### Riesgo detectado en Fase 1
+### Riesgo resuelto en Fase 2
 
-El `numero_os` se genera actualmente en `localStorage` del navegador. Si se crean ordenes desde dos navegadores distintos sin sincronizacion, puede haber colision (el `UNIQUE KEY` en BD lo bloquea, pero el usuario vera un error). La Fase 2 debe centralizar la generacion del consecutivo en el backend PHP.
+El `numero_os` ya no se genera en `localStorage`. La creacion de OS debe pasar por `api/create-order.php`, que toma el siguiente valor desde `secuencias` en MariaDB. El navegador conserva `localStorage` solo como cache.

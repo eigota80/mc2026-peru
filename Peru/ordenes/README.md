@@ -268,7 +268,7 @@ const DATA_VERSION_KEY = 'mcperu_os_data_version';
 const DATA_VERSION     = 'reset-20260518-v1';
 ```
 
-Cuando `DATA_VERSION` no coincide, `resetOrders()` borra ordenes en localStorage y reinicia el consecutivo localStorage a 000700. **El consecutivo oficial en MariaDB no se ve afectado.**
+Cuando `DATA_VERSION` no coincide, `resetOrders()` borra ordenes en localStorage y reinicia la clave legacy `mcperu_service_order_next_number` a 000700. **El consecutivo oficial en MariaDB no se ve afectado.**
 
 ### Reset manual (administrador)
 
@@ -373,7 +373,7 @@ Incrementar el sufijo en cada deploy que modifique JS o CSS. Patron: `YYYYMMDD-d
 
 ## Guia para AI futura
 
-> **OBLIGATORIO**: Todo agente AI que trabaje en este proyecto DEBE conectarse al servidor y BD via MCP `mcperu-web`. Las credenciales y llaves SSH estan en `Peru/mcp_web_connector/.env`. El acceso directo via SSH sin MCP no esta permitido.
+> **OBLIGATORIO**: Todo agente AI que trabaje en este proyecto DEBE conectarse al servidor y BD via MCP `mcperu-web`. La configuracion sensible vive en el entorno local del conector y no debe leerse, copiarse ni exponerse. El acceso directo via SSH sin MCP no esta permitido.
 
 1. **Backend + localStorage.** Las OS se crean/leen desde MariaDB via `api/`. El localStorage hace de cache. Cotizaciones y clientes aun usan localStorage como fuente primaria.
 
