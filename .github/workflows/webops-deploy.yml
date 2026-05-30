@@ -48,7 +48,8 @@ jobs:
               missing=$((missing+1))
             fi
           done < <(find Peru -name "*.html" \
-            -not -path "*/Ordenes de servicios/*" \
+            -not -path "*/ordenes/*" \
+            -not -path "*/Ordenes*" \
             -not -path "*/logs/*" \
             -not -path "*/php/*" \
             -print0)
@@ -57,9 +58,24 @@ jobs:
 
       - name: Validate JS syntax
         run: |
-          node --check "Peru/Ordenes de servicios/ordenes-servicio.js"
-          node --check "Peru/Ordenes de servicios/login.js"
+          node --check "Peru/ordenes/ordenes-servicio.js"
+          node --check "Peru/ordenes/login.js"
           echo "JS syntax: OK"
+
+      - name: Validate PHP syntax
+        run: |
+          sudo apt-get install -y php-cli > /dev/null 2>&1
+          errors=0
+          for f in Peru/api/*.php; do
+            if php -l "$f" > /dev/null 2>&1; then
+              echo "  ✓ $f"
+            else
+              php -l "$f"
+              errors=$((errors+1))
+            fi
+          done
+          [ $errors -eq 0 ] && echo "PHP syntax: OK" || \
+            { echo "::error::$errors archivo(s) PHP con errores"; exit 1; }
 
   # ─── 2. PREVIEW EN STAGING (solo en PR) ──────────────────────────────────
   preview:
@@ -71,17 +87,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup SSH para mcp-agent
+      - name: Setup SSH RSA para mcp-agent
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.MCP_AGENT_SSH_PRIVATE_KEY }}" > ~/.ssh/mcp-agent-key
-          chmod 600 ~/.ssh/mcp-agent-key
+          echo "${{ secrets.MCP_AGENT_SSH_PRIVATE_KEY }}" > ~/.ssh/mcp-agent-rsa
+          chmod 600 ~/.ssh/mcp-agent-rsa
           ssh-keyscan -H 179.43.82.54 >> ~/.ssh/known_hosts
 
       - name: Deploy a Staging via SSH
         run: |
-          ssh -i ~/.ssh/mcp-agent-key \
-              -o StrictHostKeyChecking=no \
+          ssh -i ~/.ssh/mcp-agent-rsa \
+              -o BatchMode=yes \
+              -o IdentitiesOnly=yes \
+              -o PubkeyAuthentication=yes \
+              -o PasswordAuthentication=no \
+              -o StrictHostKeyChecking=yes \
               mcp-agent@179.43.82.54 \
               "sudo /usr/local/bin/update-staging.sh ${{ github.head_ref }}"
 
@@ -137,17 +157,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup SSH para mcp-agent
+      - name: Setup SSH RSA para mcp-agent
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.MCP_AGENT_SSH_PRIVATE_KEY }}" > ~/.ssh/mcp-agent-key
-          chmod 600 ~/.ssh/mcp-agent-key
+          echo "${{ secrets.MCP_AGENT_SSH_PRIVATE_KEY }}" > ~/.ssh/mcp-agent-rsa
+          chmod 600 ~/.ssh/mcp-agent-rsa
           ssh-keyscan -H 179.43.82.54 >> ~/.ssh/known_hosts
 
       - name: Deploy a Produccion via SSH
         run: |
-          ssh -i ~/.ssh/mcp-agent-key \
-              -o StrictHostKeyChecking=no \
+          ssh -i ~/.ssh/mcp-agent-rsa \
+              -o BatchMode=yes \
+              -o IdentitiesOnly=yes \
+              -o PubkeyAuthentication=yes \
+              -o PasswordAuthentication=no \
+              -o StrictHostKeyChecking=yes \
               mcp-agent@179.43.82.54 \
               "sudo /usr/local/bin/deploy-mcperu.sh production main"
 
@@ -168,8 +192,12 @@ jobs:
         if: failure()
         run: |
           echo "Deploy fallido — ejecutando rollback automatico..."
-          ssh -i ~/.ssh/mcp-agent-key \
-              -o StrictHostKeyChecking=no \
+          ssh -i ~/.ssh/mcp-agent-rsa \
+              -o BatchMode=yes \
+              -o IdentitiesOnly=yes \
+              -o PubkeyAuthentication=yes \
+              -o PasswordAuthentication=no \
+              -o StrictHostKeyChecking=yes \
               mcp-agent@179.43.82.54 \
               "cd /home/mcp-agent/apps/mcperu && git checkout HEAD~1 -- . && sudo systemctl reload nginx"
           echo "::error::Deploy fallido — rollback aplicado al commit anterior"

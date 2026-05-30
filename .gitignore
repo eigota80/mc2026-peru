@@ -10,6 +10,17 @@
 # Variables sensibles
 **/.env
 *.env.local
+**/php/library/secretKey.php
+
+# Claves SSH privadas
+**/id_rsa
+**/id_dsa
+**/id_ecdsa
+**/id_ed25519
+**/*_rsa
+**/*_ed25519
+**/*.private
+!**/*.pub
 
 # Logs locales
 logs/
