@@ -167,6 +167,21 @@ jobs:
           chmod 600 ~/.ssh/mcp-agent-rsa
           ssh-keyscan -H 179.43.82.54 >> ~/.ssh/known_hosts
 
+      - name: Sincronizar estructura de directorios en servidor
+        run: |
+          find Peru -mindepth 1 -type d \
+            ! -path '*/.git/*' \
+            ! -path '*/mcp_web_connector/*' \
+            ! -path '*/logs/*' \
+            ! -path '*/backend/*' \
+            | sed 's|^Peru/||' \
+            | while read dir; do
+                ssh -i ~/.ssh/mcp-agent-rsa \
+                    -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no \
+                    mcp-agent@179.43.82.54 \
+                    "sudo mkdir -p /var/www/html/$dir" || true
+              done
+
       - name: Deploy a Produccion via rsync
         run: |
           rsync -rvz --ignore-errors \
@@ -176,7 +191,6 @@ jobs:
             --exclude='mcp_web_connector/' \
             --exclude='logs/' \
             --exclude='backend/' \
-            --rsync-path="sudo rsync" \
             -e "ssh -i ~/.ssh/mcp-agent-rsa -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no" \
             Peru/ \
             mcp-agent@179.43.82.54:/var/www/html/ || true
