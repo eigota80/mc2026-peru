@@ -166,7 +166,8 @@ jobs:
 
       - name: Deploy a Produccion via rsync
         run: |
-          rsync -avz --delete \
+          rsync -rvz --delete \
+            --no-owner --no-group --no-perms \
             --exclude='.git' \
             --exclude='*.md' \
             --exclude='mcp_web_connector/.venv' \
