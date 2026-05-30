@@ -785,7 +785,8 @@
 (function(){
   var hero=document.querySelector('.home-hero');
   var canvas=document.querySelector('.home-hero_particles');
-  if(!hero||!canvas||window.matchMedia('(prefers-reduced-motion: reduce)').matches){return}
+  if(!hero||!canvas){return}
+  var reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var ctx=canvas.getContext('2d');
   var particles=[];
   var pointer={x:0,y:0,active:false};
@@ -807,11 +808,12 @@
     var amount=Math.max(120,Math.min(280,Math.round(width*height/4400)));
     particles=[];
     for(var i=0;i<amount;i++){
+      var speed=reducedMotion?.08:.34;
       particles.push({
         x:Math.random()*width,
         y:Math.random()*height,
-        vx:(Math.random()-.5)*.34,
-        vy:(Math.random()-.5)*.34,
+        vx:(Math.random()-.5)*speed,
+        vy:(Math.random()-.5)*speed,
         r:Math.random()*1.9+0.35,
         alpha:Math.random()*.58+.22
       });
