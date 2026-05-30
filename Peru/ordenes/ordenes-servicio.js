@@ -829,19 +829,56 @@
 		if (!els.orderForm.reportValidity()) {
 			return;
 		}
-		const next = getNextNumber();
-		const orderNumber = padOrderNumber(next);
+
+		const orderClient = findClient(selectedClientId);
+		const data = getOrderFormData();
+		let result;
+		try {
+			const response = await fetch(API_BASE + '/create-order.php', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					razon_social:      orderClient ? orderClient.razon_social : '',
+					ruc_dni:           orderClient ? orderClient.ruc_dni : '',
+					fecha:             data.fecha,
+					moneda:            data.moneda,
+					duracion:          data.duracion,
+					tipo_servicio:     data.tipoServicio,
+					ciudad:            data.ciudad,
+					dias_entrega:      data.diasEntrega,
+					direccion_origen:  data.direccionOrigen,
+					direccion_destino: data.direccionDestino,
+					detalle:           data.detalle,
+					servicio:          data.servicio,
+					mrc:               data.mrc,
+					costo_instalacion: hasInstallationCost(data.costoInstalacion) ? 'si' : 'no',
+					nrc:               hasInstallationCost(data.costoInstalacion) ? data.nrc : '',
+					observacion:       data.observacion,
+					facilidades_pago:  data.facilidadesPago,
+					estado:            'Creada',
+					created_by:        currentUser.id,
+				})
+			});
+			result = await response.json();
+		} catch (e) {
+			window.alert('Error de conexión al crear la orden. Verifica tu conexión e intenta de nuevo.');
+			return;
+		}
+
+		if (!result || !result.ok) {
+			window.alert((result && result.error) ? result.error : 'No se pudo crear la orden.');
+			return;
+		}
+
+		// El número oficial lo asigna el servidor — fuente de verdad única
+		const orderNumber = result.numero_os;
 		const order = orderFromForm(orderNumber);
+		order.id = 'ord_db_' + result.id;
+		order.db_id = result.id;
+
 		const orders = getOrders();
 		orders.unshift(order);
 		saveOrders(orders);
-		var orderClient = findClient(order.cliente_id);
-		apiPost('/ordenes.php', Object.assign({ action: 'create' }, order, {
-			razon_social: orderClient ? orderClient.razon_social : '',
-			ruc_dni: orderClient ? orderClient.ruc_dni : ''
-		}));
-		localStorage.setItem(STORAGE_KEY, String(next + 1));
-		updateCounterView();
 		audit('creo orden', `OS ${orderNumber}`);
 		saveDraft();
 		await downloadOrderPdf(order);
@@ -888,6 +925,43 @@
 			apiPost('/ordenes.php', { action: 'update_status', db_id: orders[index].db_id, estado: status });
 		}
 		audit('actualizo estado', `OS ${orders[index].numero_os} -> ${status}`);
+		renderAll();
+	}
+
+	async function deleteOrder(dbId, localId, numeroOs) {
+		if (!hasPermission('manage_users')) {
+			window.alert('Tu rol no permite borrar ordenes.');
+			return;
+		}
+		const confirmed = window.confirm(
+			`¿Deseas eliminar la orden ${numeroOs}?\nEsta acción no libera el consecutivo.`
+		);
+		if (!confirmed) { return; }
+
+		if (dbId) {
+			let result;
+			try {
+				const response = await fetch(API_BASE + '/delete-order.php', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ id: dbId, deleted_by: currentUser.id })
+				});
+				result = await response.json();
+			} catch (e) {
+				window.alert('Error de conexión al eliminar la orden.');
+				return;
+			}
+			if (!result || !result.ok) {
+				window.alert((result && result.error) ? result.error : 'No se pudo eliminar la orden.');
+				return;
+			}
+		}
+
+		// Quitar del caché local (no reutiliza el número)
+		const orders = getOrders();
+		const filtered = orders.filter((o) => o.id !== localId && String(o.db_id || '') !== String(dbId || ''));
+		saveOrders(filtered);
+		audit('elimino orden', `OS ${numeroOs}`);
 		renderAll();
 	}
 
@@ -944,6 +1018,9 @@
 		}
 		if (hasPermission('manage_users') && order.estado !== 'Activada') {
 			buttons.push(`<button type="button" class="os-button os-button-primary" data-status-order="${escapeHtml(order.id)}" data-status-value="Activada">Activar</button>`);
+		}
+		if (hasPermission('manage_users') && order.estado !== 'ELIMINADA') {
+			buttons.push(`<button type="button" class="os-button os-button-danger" data-action="delete-order" data-id="${escapeHtml(String(order.db_id || ''))}" data-os-id="${escapeHtml(order.id)}" data-numero-os="${escapeHtml(order.numero_os)}" title="Borrar orden (no libera el consecutivo)">Borrar</button>`);
 		}
 		return `<div class="os-row-actions">${buttons.join('')}</div>`;
 	}
@@ -1462,14 +1539,22 @@
 		if (els.statusFilter) { els.statusFilter.addEventListener('change', renderOrders); }
 		if (els.ordersBody) {
 			els.ordersBody.addEventListener('click', (event) => {
-				const pdfButton = event.target.closest('[data-pdf-order]');
+				const pdfButton    = event.target.closest('[data-pdf-order]');
 				const statusButton = event.target.closest('[data-status-order]');
+				const deleteButton = event.target.closest('[data-action="delete-order"]');
 				if (pdfButton) {
 					const order = getOrders().find((item) => item.id === pdfButton.dataset.pdfOrder);
 					if (order) { downloadOrderPdf(order); }
 				}
 				if (statusButton) {
 					updateOrderStatus(statusButton.dataset.statusOrder, statusButton.dataset.statusValue);
+				}
+				if (deleteButton) {
+					deleteOrder(
+						parseInt(deleteButton.dataset.id, 10) || null,
+						deleteButton.dataset.osId,
+						deleteButton.dataset.numeroOs
+					);
 				}
 			});
 		}

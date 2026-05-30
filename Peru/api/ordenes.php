@@ -7,13 +7,14 @@ $pdo    = db();
 /* ── GET ─────────────────────────────────────────────────────────────── */
 if ($method === 'GET') {
     $stmt = $pdo->query(
-        'SELECT id, numero_os, razon_social, ruc_dni, fecha, moneda, duracion,
+        "SELECT id, numero_os, razon_social, ruc_dni, fecha, moneda, duracion,
                 tipo_servicio, ciudad, dias_entrega, direccion_origen, direccion_destino,
                 detalle, servicio, mrc, costo_instalacion, nrc, observacion,
                 facilidades_pago, estado, created_by, created_at
          FROM orden_servicio
+         WHERE estado <> 'ELIMINADA' AND deleted_at IS NULL
          ORDER BY id DESC
-         LIMIT 1500'
+         LIMIT 1500"
     );
     $rows = $stmt->fetchAll();
 
