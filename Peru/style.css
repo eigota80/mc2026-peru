@@ -158,6 +158,20 @@
 	content: 'Soporte';
 }
 
+.mainNav_navigation-content-5:before {
+	content: 'Servicios';
+}
+
+@media only screen and (min-width: 64em) {
+	.mainNav_navigation-content-1,
+	.mainNav_navigation-content-2,
+	.mainNav_navigation-content-3,
+	.mainNav_navigation-content-4,
+	.mainNav_navigation-content-5 {
+		width: 20% !important;
+	}
+}
+
 .mainNav-btn,
 .mainNav-navigation section:nth-child(1) .mainNav-btn {
 	position: relative;
